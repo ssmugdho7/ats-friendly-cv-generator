@@ -42,6 +42,7 @@ const Preview = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [numPages, setNumPages] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [previewWidth, setPreviewWidth] = useState(400);
 
     // Debounced PDF generation - wait 300ms after last change
     useEffect(() => {
@@ -85,10 +86,30 @@ const Preview = () => {
     const goPrev = () => setPageNumber(p => Math.max(1, p - 1));
     const goNext = () => setPageNumber(p => (numPages ? Math.min(numPages, p + 1) : p + 1));
 
+    useEffect(() => {
+        if (!parentRef.current) return;
+        const updateWidth = () => {
+            setPreviewWidth(parentRef.current.clientWidth);
+        };
+        updateWidth();
+        window.addEventListener('resize', updateWidth);
+        return () => window.removeEventListener('resize', updateWidth);
+    }, []);
+
     return (
         <div ref={parentRef} className="relative flex w-full flex-col">
             {/* PDF Preview */}
             <div className="relative overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/50 shadow-2xl shadow-black/20">
+                {/* Download button top right */}
+                {!loading && (
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="absolute right-3 top-3 z-20 flex items-center gap-2 rounded-lg border border-primary-600/50 bg-primary-600/20 px-3 py-2 text-sm font-medium text-primary-400 transition-all hover:bg-primary-600/30 hover:text-primary-300"
+                    >
+                        <FaDownload className="h-3.5 w-3.5" />
+                        <span>Download</span>
+                    </button>
+                )}
                 {loading || !pdfUrl ? (
                     <Loader />
                 ) : (
@@ -98,7 +119,7 @@ const Preview = () => {
                             renderTextLayer={false}
                             renderAnnotationLayer={false}
                             loading={<Loader />}
-                            width={parentRef.current?.clientWidth}
+                            width={previewWidth}
                             className="mx-auto"
                         />
                     </Document>
@@ -137,14 +158,6 @@ const Preview = () => {
                     >
                         <FaExpand className="h-3.5 w-3.5" />
                         <span>Fullscreen</span>
-                    </button>
-
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-primary-600/50 bg-primary-600/20 px-4 py-2.5 text-sm font-medium text-primary-400 transition-all hover:bg-primary-600/30 hover:text-primary-300"
-                    >
-                        <FaDownload className="h-3.5 w-3.5" />
-                        <span>Download</span>
                     </button>
                 </div>
             )}
