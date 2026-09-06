@@ -32,11 +32,6 @@
 - **Redux:** A predictable state container for managing application state.
 - **React PDF:** A library for creating PDFs using React components.
 
-## Screenshots
-
-<img src="./public/screenshots/1.png" width="75%" />
-<img src="./public/screenshots/2.png" width="75%" />
-
 ## Installation
 If you want to run CVGen Project locally, follow these steps:
 
