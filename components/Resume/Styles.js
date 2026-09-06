@@ -18,6 +18,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Times-Bold',
         textAlign: 'center',
     },
+    header__tagline: {
+        color: '#444',
+        fontSize: 12,
+        textAlign: 'center',
+        marginTop: 2,
+    },
     header__links: {
         color: '#555',
         fontSize: 11,
@@ -28,6 +34,21 @@ const styles = StyleSheet.create({
         marginTop: 6,
         marginBottom: 4,
     },
+    header__link: {
+        color: '#555',
+        textDecoration: 'none',
+    },
+    project_links: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+    },
+    project_link: {
+        color: '#666',
+        fontSize: 11,
+        textDecoration: 'none',
+    },
 
     title_wrapper: {
         display: 'flex',
@@ -35,6 +56,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         fontSize: 12,
+    },
+
+    wrappper: {
+        marginBottom: 4,
     },
 
     subTitle_wrapper: {

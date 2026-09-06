@@ -1,51 +1,93 @@
 'use client';
 
 import { Page, Text, View, Document, Link } from '@react-pdf/renderer';
-import Section from './Section';
+import Section, { getFont } from './Section';
 import ListItem from './ListItem';
-import styles from '../Styles';
 import formatDate from '@/utils/formatDate';
+import { parseRich, normUrl } from '@/utils/richText';
+import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
+import { TEMPLATES, DEFAULT_TEMPLATE } from '@/config/templates';
 
-const Header = ({ data }) => {
-    const contactLinks = [
-        {
-            name: data['phone'],
-            value: data['phone'],
-        },
-        {
-            name: data['email'],
-            value: `mailto:${data['email']}`,
-        },
-        {
-            name: 'LinkedIn',
-            value: data['linkedin'],
-        },
-        {
-            name: 'Github',
-            value: data['github'],
-        },
-        {
-            name: 'Blogs',
-            value: data['blogs'],
-        },
-        {
-            name: 'Twitter',
-            value: data['twitter'],
-        },
-        {
-            name: 'Portfolio',
-            value: data['portfolio'],
-        },
-    ];
+const getTemplate = key => TEMPLATES[key] || TEMPLATES[DEFAULT_TEMPLATE];
+
+const RichSegments = ({ text, font, tmpl }) => (
+    <>
+        {parseRich(text).map((seg, i) => (
+            <Text
+                key={i}
+                style={{
+                    fontFamily: seg.bold ? getFont(font?.family, true) : getFont(font?.family, false),
+                    color: seg.color || tmpl.text,
+                }}
+            >
+                {seg.t}
+            </Text>
+        ))}
+    </>
+);
+
+const linkStyle = (font, tmpl) => ({
+    color: font?.linkColor || tmpl.accent,
+    textDecoration: font?.linkUnderline ? 'underline' : 'none',
+});
+
+const Description = ({ text, bullets, font, tmpl }) => {
+    const lines = String(text || '')
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean);
+    if (!lines.length) return null;
+    const descSize = font?.descSize || font?.size || 10;
+
+    if (bullets === false) {
+        return (
+            <View style={{ fontSize: descSize, marginTop: 2 }}>
+                {lines.map((line, i) => (
+                    <Text key={i} style={{ fontSize: descSize, fontFamily: getFont(font?.family), marginTop: 2, color: tmpl.text }}>
+                        <RichSegments text={line} font={font} tmpl={tmpl} />
+                    </Text>
+                ))}
+            </View>
+        );
+    }
 
     return (
-        <Section>
-            <Text style={styles.header__name}>{data.name}</Text>
-            <View style={styles.header__links}>
+        <View style={{ fontSize: descSize, marginTop: 2 }}>
+            {lines.map((line, i) => (
+                <ListItem key={i} font={font} tmpl={tmpl}>
+                    <RichSegments text={line} font={font} tmpl={tmpl} />
+                </ListItem>
+            ))}
+        </View>
+    );
+};
+
+const Header = ({ data, tagline, font, tmpl }) => {
+    const contactLinks = [
+        { id: 'phone', name: data['phone'], value: data['phone'] ? `tel:${data['phone']}` : '' },
+        { id: 'email', name: data['email'], value: data['email'] ? `mailto:${data['email']}` : '' },
+        { id: 'linkedin', name: 'LinkedIn', value: data['linkedin'] },
+        { id: 'github', name: 'Github', value: data['github'] },
+        { id: 'blogs', name: 'Blogs', value: data['blogs'] },
+        { id: 'twitter', name: 'Twitter', value: data['twitter'] },
+        { id: 'portfolio', name: 'Portfolio', value: data['portfolio'] },
+    ];
+
+    const nameSize = font?.nameSize || 20;
+
+    return (
+        <Section font={font} tmpl={tmpl}>
+            <Text style={{ color: tmpl.accent, fontSize: nameSize, fontFamily: getFont(font?.family, true), textAlign: 'center' }}>
+                {data.name}
+            </Text>
+            {!!tagline && (
+                <Text style={{ color: tmpl.light, fontSize: 12, textAlign: 'center', marginTop: 2, fontFamily: getFont(font?.family) }}>{tagline}</Text>
+            )}
+            <View style={{ color: tmpl.text, fontSize: 11, display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 14, marginTop: 6, marginBottom: 4 }}>
                 {contactLinks
                     .filter(obj => obj.value)
-                    .map(({ value, name }) => (
-                        <Link key={name} src={value} style={{ color: '#555' }}>
+                    .map(({ id, value, name }) => (
+                        <Link key={id} src={value} style={{ color: tmpl.accent, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
                             {name}
                         </Link>
                     ))}
@@ -54,166 +96,236 @@ const Header = ({ data }) => {
     );
 };
 
-const Education = ({ data }) => (
-    <Section title={'Education'}>
+const Summary = ({ data, font, tmpl }) => {
+    if (!data?.summary) return null;
+    return (
+        <Section title={'Summary'} font={font} tmpl={tmpl}>
+            <Text style={{ fontSize: font?.descSize || font?.size || 10, fontFamily: getFont(font?.family), color: tmpl.text }}>
+                <RichSegments text={data.summary} font={font} tmpl={tmpl} />
+            </Text>
+        </Section>
+    );
+};
+
+const Education = ({ data, font, tmpl }) => (
+    <Section title={'Education'} font={font} tmpl={tmpl}>
         {data.map(({ degree, institution, start, end, location, gpa }, i) => (
-            <View key={i} style={styles?.wrappper}>
-                <View style={styles.title_wrapper}>
-                    <Text style={styles.title}>{degree}</Text>
-                    <Text style={styles.date}>
+            <View key={i} style={{ marginBottom: 4 }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{degree}</Text>
+                    <Text style={{ fontFamily: getFont(font?.family), fontSize: 10, fontStyle: 'italic', color: tmpl.light }}>
                         {formatDate(start)}- {formatDate(end)}
                     </Text>
                 </View>
-
-                <View style={styles.subTitle_wrapper}>
-                    <Text>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                    <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>
                         {institution}
                         {gpa && <Text> ({gpa})</Text>}
                     </Text>
-
-                    <Text style={styles.date}>{location}</Text>
+                    <Text style={{ fontFamily: getFont(font?.family), fontSize: 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
                 </View>
-
-                {i !== data.length - 1 && <View style={styles.line} />}
+                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
             </View>
         ))}
     </Section>
 );
 
-const Projects = ({ data }) => (
-    <Section title={'Projects'}>
+const Projects = ({ data, font, tmpl }) => (
+    <Section title={'Projects'} font={font} tmpl={tmpl}>
         {data.map((project, i) => (
             <View key={i}>
-                <View style={styles.title_wrapper}>
-                    <Text style={styles.title}>{project.title}</Text>
-                    {/* <Text style={styles.date}>
-                        ({project.start} - {project.end})
-                    </Text> */}
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{project.title}</Text>
+                    {(project.github || project.live) && (
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            {project.github ? (
+                                <Link src={normUrl(project.github)} style={{ color: tmpl.accent, fontSize: 11, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
+                                    GitHub
+                                </Link>
+                            ) : null}
+                            {project.live ? (
+                                <Link src={normUrl(project.live)} style={{ color: tmpl.accent, fontSize: 11, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
+                                    Live
+                                </Link>
+                            ) : null}
+                        </View>
+                    )}
                 </View>
-
-                <View style={styles.subTitle_wrapper}>
-                    <Link
-                        style={{
-                            textDecoration: 'none',
-                            color: '#666',
-                        }}
-                        src={project.url}
-                    >
-                        {project.url}
-                    </Link>
-                </View>
-
-                <View style={styles.lists}>
-                    {project.description
-                        ?.split('\n')
-                        .filter(line => line)
-                        .map((responsibility, i) => (
-                            <ListItem key={i}>{responsibility}</ListItem>
-                        ))}
-                </View>
-
-                {i !== data.length - 1 && <View style={styles.line} />}
+                {!!project.url && (
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                        <Link style={{ color: tmpl.accent, fontSize: 11, textDecoration: 'none', fontFamily: getFont(font?.family) }} src={normUrl(project.url)}>
+                            {project.url}
+                        </Link>
+                    </View>
+                )}
+                <Description text={project.description} bullets={project.bullets} font={font} tmpl={tmpl} />
+                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
             </View>
         ))}
     </Section>
 );
 
-const Experience = ({ data }) => (
-    <Section title={'Experience'}>
-        {data.map(({ role, start, end, company, location, description }, i) => (
-            <View key={i} style={styles?.wrappper}>
-                <View style={styles.title_wrapper}>
-                    <Text style={styles.title}>{role}</Text>
-                    <Text style={styles.date}>
+const Experience = ({ data, font, tmpl }) => (
+    <Section title={'Experience'} font={font} tmpl={tmpl}>
+        {data.map(({ role, start, end, company, location, description, bullets }, i) => (
+            <View key={i} style={{ marginBottom: 4 }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{role}</Text>
+                    <Text style={{ fontFamily: getFont(font?.family), fontSize: 10, fontStyle: 'italic', color: tmpl.light }}>
                         {formatDate(start)} - {formatDate(end)}
                     </Text>
                 </View>
-
-                <View style={styles.subTitle_wrapper}>
-                    <Text>{company}</Text>
-                    <Text>{location}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                    <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>{company}</Text>
+                    <Text style={{ fontFamily: getFont(font?.family), fontSize: 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
                 </View>
-
-                <View style={styles.lists}>
-                    {description?.split('\n').map((responsibility, i) => (
-                        <ListItem key={i}>{responsibility}</ListItem>
-                    ))}
-                </View>
-                {i !== data.length - 1 && <View style={styles.line} />}
+                <Description text={description} bullets={bullets} font={font} tmpl={tmpl} />
+                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
             </View>
         ))}
     </Section>
 );
 
-const Skills = ({ data }) => (
-    <Section title={'skills'}>
-        {data?.split('\n').map((line, i) => (
-            <Text key={i} style={{ fontSize: 11 }}>
-                {line}
-            </Text>
-        ))}
-    </Section>
-);
+const Skills = ({ data, font, tmpl }) => {
+    const groups = Array.isArray(data) ? data : data?.skills ? [{ title: 'Skills', skills: data.skills }] : [];
+    const visible = groups.filter(g => g && (g.title || g.skills));
+    if (!visible.length) return null;
 
-const Certificaes = ({ data }) => (
-    <Section title={'Certifications'}>
+    return (
+        <Section title={'Skills'} font={font} tmpl={tmpl}>
+            {visible.map((group, i) => (
+                <Text key={i} style={{ fontSize: font?.size || 10, marginTop: i ? 3 : 0, fontFamily: getFont(font?.family), color: tmpl.text }}>
+                    {!!group.title && (
+                        <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.accent }}>{group.title}: </Text>
+                    )}
+                    <RichSegments text={group.skills} font={font} tmpl={tmpl} />
+                </Text>
+            ))}
+        </Section>
+    );
+};
+
+const Certificaes = ({ data, font, tmpl }) => (
+    <Section title={'Certifications'} font={font} tmpl={tmpl}>
         {data.map(({ title, issuer, date }, i) => (
-            <View key={i} style={styles?.wrappper}>
-                <View style={styles.title_wrapper}>
-                    <Text style={styles.title}>{title}</Text>
-                    <Text style={styles.date}>{formatDate(date)}</Text>
+            <View key={i} style={{ marginBottom: 4 }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{title}</Text>
+                    <Text style={{ fontFamily: getFont(font?.family), fontSize: 10, fontStyle: 'italic', color: tmpl.light }}>{formatDate(date)}</Text>
                 </View>
-
-                <View style={styles.subTitle_wrapper}>
-                    <Text>{issuer}</Text>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                    <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>{issuer}</Text>
                 </View>
-
-                {i !== data.length - 1 && <View style={styles.line} />}
+                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
             </View>
         ))}
     </Section>
 );
 
-const Languages = ({ data }) => (
-    <Section title={'Languages'}>
-        <View
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-            }}
-        >
+const Languages = ({ data, font, tmpl }) => (
+    <Section title={'Languages'} font={font} tmpl={tmpl}>
+        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
             {data.map(({ language, proficiency }, i) => (
                 <View key={i}>
-                    <Text style={{ fontSize: 12 }}>{language}</Text>
-                    <Text style={{ fontSize: 10, color: '#777' }}>{proficiency}</Text>
+                    <Text style={{ fontSize: font?.size ? font.size + 2 : 12, fontFamily: getFont(font?.family), color: tmpl.text }}>
+                        {language}
+                    </Text>
+                    <Text style={{ fontSize: font?.size || 10, color: tmpl.light, fontFamily: getFont(font?.family) }}>
+                        {proficiency}
+                    </Text>
                 </View>
             ))}
         </View>
     </Section>
 );
 
-const Resume = ({ data }) => {
-    const { contact, education, experience, projects, summary, skills, certificates, languages } = data;
+const References = ({ data, font, tmpl }) => (
+    <Section title={'References'} font={font} tmpl={tmpl}>
+        {data.map(({ name, role, company, contacts, website }, i) => (
+            <View key={i} style={{ marginBottom: 4 }}>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 12 }}>
+                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{name}</Text>
+                    {website && (
+                        <Link src={normUrl(website)} style={{ color: tmpl.accent, fontSize: 11, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
+                            Website
+                        </Link>
+                    )}
+                </View>
+                {(role || company) && (
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
+                        <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>
+                            {role}{role && company ? ' at ' : ''}{company}
+                        </Text>
+                    </View>
+                )}
+                {!!contacts && (
+                    <Text style={{ fontSize: font?.descSize || font?.size || 10, fontFamily: getFont(font?.family), marginTop: 2, color: tmpl.light }}>
+                        {String(contacts).split('\n').filter(c => c.trim()).join(' | ')}
+                    </Text>
+                )}
+                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
+            </View>
+        ))}
+    </Section>
+);
+
+const sectionComponents = {
+    summary: Summary,
+    education: Education,
+    experience: Experience,
+    projects: Projects,
+    skills: Skills,
+    certificates: Certificaes,
+    languages: Languages,
+    references: References,
+};
+
+const renderOrderedSections = (sections, order, font, tmpl) => {
+    const keys = Array.isArray(order) && order.length ? order : DEFAULT_SECTION_ORDER;
+    return keys.map(key => {
+        const Component = sectionComponents[key];
+        if (!Component) return null;
+        const sectionData = sections[key];
+        if (sectionData == null) return null;
+        if (Array.isArray(sectionData) && sectionData.length === 0) return null;
+        if (key === 'summary' && !sectionData.summary) return null;
+        if (key === 'skills') {
+            const groups = Array.isArray(sectionData)
+                ? sectionData
+                : sectionData.skills
+                  ? [sectionData]
+                  : [];
+            if (!groups.filter(g => g && (g.title || g.skills)).length) return null;
+        }
+        return <Component key={key} data={sectionData} font={font} tmpl={tmpl} />;
+    });
+};
+
+const Resume = ({ data, size = 'A4', padding = 30 }) => {
+    const {
+        contact,
+        tagline,
+        education,
+        experience,
+        projects,
+        summary,
+        skills,
+        certificates,
+        languages,
+        references,
+        sectionOrder,
+        template,
+        font,
+    } = data || {};
+
+    const tmpl = getTemplate(template);
+    const sections = { summary, education, experience, projects, skills, certificates, languages, references };
 
     return (
         <Document language="en">
-            <Page size="A4" style={styles.page}>
-                <Header data={contact} />
-
-                {summary?.summary && (
-                    <Section title={'Summary'}>
-                        <Text style={{ fontSize: 10 }}>{summary?.summary}</Text>
-                    </Section>
-                )}
-
-                {education.length > 0 && <Education data={education} />}
-                {experience.length > 0 && <Experience data={experience} />}
-                {projects.length > 0 && <Projects data={projects} />}
-
-                {skills?.skills?.length > 0 && <Skills data={skills.skills} />}
-                {certificates?.length > 0 && <Certificaes data={certificates} />}
-                {languages?.length > 0 && <Languages data={languages} />}
+            <Page size={size} style={{ backgroundColor: tmpl.bg, color: tmpl.text, padding, fontFamily: getFont(font?.family) }}>
+                <Header data={contact || {}} tagline={tagline?.tagline} font={font} tmpl={tmpl} />
+                {renderOrderedSections(sections, sectionOrder, font, tmpl)}
             </Page>
         </Document>
     );

@@ -1,27 +1,43 @@
 import { StyleSheet, Text, View } from '@react-pdf/renderer';
 
-const Section = ({ title, style, children }) => {
+const FONT_MAP = { 'Arial': 'Helvetica', 'Courier-New': 'Courier', 'Garamond': 'Times-Roman', 'Georgia': 'Times-Roman', 'Palatino': 'Times-Roman', 'Verdana': 'Helvetica', 'Tahoma': 'Helvetica' };
+const getFont = (family, bold) => {
+    const base = FONT_MAP[family] || family || 'Times-Roman';
+    if (bold) {
+        if (base === 'Helvetica') return 'Helvetica-Bold';
+        if (base === 'Courier') return 'Courier-Bold';
+        return 'Times-Bold';
+    }
+    return base;
+};
+
+const Section = ({ title, font, tmpl, children }) => {
+    const titleSize = font?.titleSize || 13;
+    const marginBefore = font?.sectionMarginBefore ?? 6;
+    const marginAfter = font?.sectionMarginAfter ?? 4;
+    const accent = tmpl?.accent || '#333';
+    const border = tmpl?.border || '#888';
+
     const styles = StyleSheet.create({
+        wrapper: {
+            marginBottom: marginAfter,
+        },
         section_title: {
             textTransform: 'uppercase',
-            color: '#333',
-            fontSize: 13,
+            color: accent,
+            fontSize: titleSize,
+            fontFamily: getFont(font?.family, true),
+            marginTop: marginBefore,
         },
-
         section_title_underline: {
             height: 1,
             margin: '2px 0px 4px 0px',
-            backgroundColor: '#888',
-        },
-        section_end: {
-            height: 2,
-            margin: '10px 0px',
-            backgroundColor: '#eee',
+            backgroundColor: border,
         },
     });
 
     return (
-        <View>
+        <View style={styles.wrapper}>
             {title && (
                 <>
                     <Text style={styles.section_title}>{title}</Text>
@@ -30,10 +46,9 @@ const Section = ({ title, style, children }) => {
             )}
 
             {children}
-
-            <View style={styles.section_end}></View>
         </View>
     );
 };
 
+export { getFont };
 export default Section;

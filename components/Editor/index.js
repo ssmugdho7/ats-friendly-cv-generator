@@ -1,38 +1,48 @@
 'use client';
 
 import ResumeFields from '@/config/ResumeFields';
-import { FaSave } from 'react-icons/fa';
 import SingleEditor from './SingleEditor';
 import MultiEditor from './MultiEditor';
+import SectionManager from './SectionManager';
+import TemplateSelector from './TemplateSelector';
 import { useDispatch } from 'react-redux';
 import { saveResume } from '@/store/slices/resumeSlice';
 import { useEffect } from 'react';
 
 const Editor = ({ tab }) => {
-    const { multiple } = ResumeFields[tab];
     const dispatch = useDispatch();
 
-    const save = e => {
-        e?.preventDefault();
-        dispatch(saveResume());
-    };
-
+    // Auto-save every 10 seconds
     useEffect(() => {
-        const interval = setInterval(save, 10000);
+        const interval = setInterval(() => {
+            dispatch(saveResume());
+        }, 10000);
         return () => clearInterval(interval);
-    }, []);
+    }, [dispatch]);
+
+    const { custom, multiple } = ResumeFields[tab] || {};
+
+    if (custom === 'SectionManager') {
+        return (
+            <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 p-5 shadow-xl backdrop-blur-sm md:p-6">
+                <SectionManager />
+            </div>
+        );
+    }
+
+    if (custom === 'TemplateSelector') {
+        return (
+            <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 p-5 shadow-xl backdrop-blur-sm md:p-6">
+                <TemplateSelector />
+            </div>
+        );
+    }
 
     return (
-        <>
-            <form onSubmit={save} className="card my-8">
-                {multiple && <MultiEditor tab={tab} />}
-                {!multiple && <SingleEditor tab={tab} />}
-
-                <button type="submit" className="btn-filled ml-auto mt-6 w-full gap-2 px-6 text-center md:w-auto">
-                    <span>Save</span> <FaSave />
-                </button>
-            </form>
-        </>
+        <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 p-5 shadow-xl backdrop-blur-sm md:p-6">
+            {multiple && <MultiEditor tab={tab} />}
+            {!multiple && <SingleEditor tab={tab} />}
+        </div>
     );
 };
 

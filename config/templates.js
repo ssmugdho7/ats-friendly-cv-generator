@@ -1,0 +1,78 @@
+export const TEMPLATES = {
+    classic: {
+        name: 'Classic',
+        accent: '#1a365d',
+        text: '#555555',
+        light: '#888888',
+        border: '#e0e0e0',
+        bg: '#ffffff',
+        font: 'Times-Roman',
+    },
+    modern: {
+        name: 'Modern',
+        accent: '#0d9488',
+        text: '#444444',
+        light: '#777777',
+        border: '#e5e7eb',
+        bg: '#ffffff',
+        font: 'Helvetica',
+    },
+    professional: {
+        name: 'Professional',
+        accent: '#374151',
+        text: '#4b5563',
+        light: '#9ca3af',
+        border: '#e5e7eb',
+        bg: '#ffffff',
+        font: 'Arial',
+    },
+    elegant: {
+        name: 'Elegant',
+        accent: '#7f1d1d',
+        text: '#555555',
+        light: '#9ca3af',
+        border: '#e5e5e5',
+        bg: '#ffffff',
+        font: 'Georgia',
+    },
+    bold: {
+        name: 'Bold',
+        accent: '#1e40af',
+        text: '#374151',
+        light: '#6b7280',
+        border: '#d1d5db',
+        bg: '#ffffff',
+        font: 'Helvetica',
+    },
+    minimal: {
+        name: 'Minimal',
+        accent: '#171717',
+        text: '#525252',
+        light: '#a3a3a3',
+        border: '#e5e5e5',
+        bg: '#ffffff',
+        font: 'Arial',
+    },
+    tech: {
+        name: 'Tech',
+        accent: '#1e3a5f',
+        text: '#4a5568',
+        light: '#718096',
+        border: '#cbd5e0',
+        bg: '#ffffff',
+        font: 'Courier',
+    },
+    executive: {
+        name: 'Executive',
+        accent: '#14532d',
+        text: '#374151',
+        light: '#6b7280',
+        border: '#d1d5db',
+        bg: '#ffffff',
+        font: 'Garamond',
+    },
+};
+
+export const TEMPLATE_KEYS = Object.keys(TEMPLATES);
+
+export const DEFAULT_TEMPLATE = 'classic';

@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
             <body>
                 <ReduxProvider>
                     <Header />
-                    <div className="mx-auto  min-h-[calc(100vh-3rem)]">{children}</div>
+                    <div className="min-h-[calc(100vh-3.5rem)]">{children}</div>
                 </ReduxProvider>
                 <GoogleAnalytics gaId='G-WPXWXJ9MC2' />
             </body>

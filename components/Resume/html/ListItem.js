@@ -1,24 +1,16 @@
-import { Text, View, StyleSheet } from '@react-pdf/renderer';
+import { getFontCSS } from './Renderer';
 
-const ListItem = ({ children }) => {
+const ListItem = ({ children, font, tmpl }) => {
+    const bulletColor = tmpl?.text || '#444';
+
     return (
-        <div style={styles.row}>
-            <div style={styles.bullet}>
-                <p>{'\u2022' + ' '}</p>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ height: '100%' }}>
+                <p style={{ fontFamily: getFontCSS(font?.family), color: bulletColor }}>{'\u2022' + ' '}</p>
             </div>
-            <p>{children}</p>
+            <p style={{ fontFamily: getFontCSS(font?.family), color: tmpl?.text || '#444' }}>{children}</p>
         </div>
     );
 };
-
-const styles = StyleSheet.create({
-    row: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    bullet: {
-        height: '100%',
-    },
-});
 
 export default ListItem;

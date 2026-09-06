@@ -1,12 +1,17 @@
 import { Text, View, StyleSheet } from '@react-pdf/renderer';
 
-const ListItem = ({ children }) => {
+const FONT_MAP = { 'Arial': 'Helvetica', 'Courier-New': 'Courier', 'Garamond': 'Times-Roman', 'Georgia': 'Times-Roman', 'Palatino': 'Times-Roman', 'Verdana': 'Helvetica', 'Tahoma': 'Helvetica' };
+const getFont = (family) => FONT_MAP[family] || family || 'Times-Roman';
+
+const ListItem = ({ children, font, tmpl }) => {
+    const bulletColor = tmpl?.text || '#444';
+
     return (
         <View style={styles.row}>
             <View style={styles.bullet}>
-                <Text>{'\u2022' + ' '}</Text>
+                <Text style={{ fontFamily: getFont(font?.family), color: bulletColor }}>{'\u2022' + ' '}</Text>
             </View>
-            <Text>{children}</Text>
+            <Text style={{ fontFamily: getFont(font?.family), color: tmpl?.text || '#444' }}>{children}</Text>
         </View>
     );
 };
@@ -18,7 +23,6 @@ const styles = StyleSheet.create({
     },
     bullet: {
         height: '100%',
-        color: '#444'
     },
 });
 

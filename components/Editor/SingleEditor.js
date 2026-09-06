@@ -15,17 +15,21 @@ const SingleEditor = ({ tab }) => {
     const handleChange = e => {
         const { name, value } = e.target;
 
+        // Font tab: coerce number fields back to numbers.
+        const numFields = ['size', 'titleSize', 'descSize', 'nameSize', 'sectionGap', 'sectionMarginBefore', 'sectionMarginAfter'];
+        const coerced = tab === 'font' && numFields.includes(name) ? Number(value) || value : value;
+
         dispatch(
             updateResumeValue({
                 tab,
                 name,
-                value,
+                value: coerced,
             }),
         );
     };
 
     return (
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6 md:gap-x-8">
+        <div className="grid gap-4 md:grid-cols-2 md:gap-5">
             {fields.map(field => (
                 <Input key={field.name} {...field} onChange={handleChange} value={resumeData?.[field?.name]} />
             ))}
