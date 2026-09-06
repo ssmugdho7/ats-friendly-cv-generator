@@ -17,7 +17,7 @@ import {
     FaFont,
     FaUsers,
     FaPalette,
-    FaLayout,
+    FaTableColumns,
     FaTrophy,
 } from 'react-icons/fa6';
 
@@ -34,7 +34,7 @@ const TAB_ICONS = {
     references: FaUsers,
     achievements: FaTrophy,
     sections: FaStackExchange,
-    layout: FaLayout,
+    layout: FaTableColumns,
     template: FaPalette,
     font: FaFont,
 };
