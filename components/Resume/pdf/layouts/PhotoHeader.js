@@ -64,7 +64,7 @@ const ContactLine = ({ contact, font, tmpl }) => {
                 <React.Fragment key={item.key}>
                     {i > 0 && <Text style={{ color: tmpl.light, fontFamily: getFont(font?.family), fontSize: 10 }}> | </Text>}
                     {item.value ? (
-                        <Link src={item.value} style={{ color: item.isLink ? linkColor : tmpl.accent, textDecoration: font?.linkUnderline && item.value.startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family), fontSize: 10 }}>
+                        <Link src={item.value} style={{ color: item.isLink ? linkColor : tmpl.accent, textDecoration: 'none', fontFamily: getFont(font?.family), fontSize: 10 }}>
                             {item.label}
                         </Link>
                     ) : (
@@ -137,7 +137,7 @@ const Experience = ({ data, tmpl, font }) => {
                         {item.description && (() => {
                             const lines = String(item.description).split('\n').map(l => l.trim()).filter(Boolean);
                             return lines.map((line, idx) => (
-                                <Text key={idx} style={{ fontFamily: getFont(font?.family), fontSize: descSize, color: tmpl.text, marginTop: idx ? lineGap : 4, textDecoration: font?.linkUnderline ? 'underline' : 'none' }}>
+                                <Text key={idx} style={{ fontFamily: getFont(font?.family), fontSize: descSize, color: tmpl.text, marginTop: idx ? lineGap : 4 }}>
                                     {line}
                                 </Text>
                             ));
@@ -189,7 +189,7 @@ const Projects = ({ data, tmpl, font }) => {
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.text, fontSize: roleSize }}>{project.title}</Text>
                             {project.github && (
-                                <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: companySize, textDecoration: font?.linkUnderline && normUrl(project.github).startsWith('http') ? 'underline' : 'none' }}>GitHub</Link>
+                                <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: companySize, textDecoration: 'none' }}>GitHub</Link>
                             )}
                         </View>
                         {project.description && (() => {
@@ -263,7 +263,7 @@ const References = ({ data, tmpl, font }) => {
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.text, fontSize: roleSize }}>{item.name}</Text>
                             {item.website && (
-                                <Link src={normUrl(item.website)} style={{ color: tmpl.accent, fontSize: companySize, textDecoration: font?.linkUnderline && normUrl(item.website).startsWith('http') ? 'underline' : 'none' }}>Website</Link>
+                                <Link src={normUrl(item.website)} style={{ color: tmpl.accent, fontSize: companySize, textDecoration: 'none' }}>Website</Link>
                             )}
                         </View>
                         {(item.role || item.company) && (
@@ -313,7 +313,7 @@ const Summary = ({ data, tmpl, font }) => {
     return (
         <Section title="Summary" tmpl={tmpl} font={font}>
             {lines.map((line, i) => (
-                <Text key={i} style={{ fontSize: descSize, fontFamily: getFont(font?.family), color: tmpl.text, marginTop: i ? 2 : 0, textDecoration: font?.linkUnderline ? 'underline' : 'none' }}>
+                <Text key={i} style={{ fontSize: descSize, fontFamily: getFont(font?.family), color: tmpl.text, marginTop: i ? 2 : 0 }}>
                     {line}
                 </Text>
             ))}

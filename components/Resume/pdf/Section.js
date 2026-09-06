@@ -18,7 +18,7 @@ const Section = ({ title, font, tmpl, children }) => {
     const marginBefore = font?.sectionMarginBefore ?? 8;
     const marginAfter = font?.sectionMarginAfter ?? 6;
     const accent = tmpl?.accent || '#333';
-    const border = font?.sectionLineColor || tmpl?.border || '#888';
+    const border = font?.sectionBreakerColor || tmpl?.border || '#888';
 
     const styles = StyleSheet.create({
         wrapper: {

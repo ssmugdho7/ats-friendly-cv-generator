@@ -23,7 +23,7 @@ const Link = ({ children, src, style }) => (
 
 const linkStyle = (font, tmpl) => ({
     color: font?.linkColor || tmpl?.accent || '#555555',
-    textDecoration: font?.linkUnderline ? 'underline' : 'none',
+    textDecoration: 'none',
 });
 
 const RichSegments = ({ text, font }) => (

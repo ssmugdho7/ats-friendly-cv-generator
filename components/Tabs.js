@@ -32,12 +32,12 @@ const TAB_ICONS = {
     references: FaUsers,
     sections: FaStackExchange,
     template: FaPalette,
-    font: FaFont,
+    typography: FaFont,
     layout: FaTableColumns,
 };
 
 const CONTENT_TABS = ['contact', 'tagline', 'summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references'];
-const SETTINGS_TABS = ['sections', 'template', 'layout', 'font'];
+const SETTINGS_TABS = ['sections', 'template', 'layout', 'typography'];
 
 const TabButton = ({ tab, activeTab, small }) => {
     const Icon = TAB_ICONS[tab];

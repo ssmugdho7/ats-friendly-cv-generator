@@ -55,10 +55,10 @@ const migrateState = state => {
     });
 
     if (!r.font || typeof r.font !== 'object' || Array.isArray(r.font)) {
-        r.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
+        r.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, sectionBreakerColor: '#e0e0e0', descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', headerAlign: 'center', imageBottomGap: 8 };
     }
     // Fill any missing font keys from older saves
-    const fontDefaults = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
+    const fontDefaults = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, sectionBreakerColor: '#e0e0e0', descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', headerAlign: 'center', imageBottomGap: 8 };
     Object.keys(fontDefaults).forEach(k => {
         if (r.font[k] === undefined || r.font[k] === null) r.font[k] = fontDefaults[k];
     });

@@ -66,10 +66,9 @@ const runs = (text, base = {}) =>
 const hyperlink = (label, url, size = 20, font, tmpl) => {
     const docxFont = DOCX_FONT_MAP[font?.family] || 'Times New Roman';
     const linkColor = toDocxColor(font?.linkColor) || toDocxColor(tmpl?.accent) || '555555';
-    const underline = font?.linkUnderline ? { type: 'single' } : undefined;
     return new ExternalHyperlink({
         link: /^(mailto:|tel:|https?:\/\/)/i.test(url) ? url : normUrl(url),
-        children: [new TextRun({ text: label, color: linkColor, size, font: docxFont, underline })],
+        children: [new TextRun({ text: label, color: linkColor, size, font: docxFont })],
     });
 };
 

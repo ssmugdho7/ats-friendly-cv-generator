@@ -16,8 +16,8 @@ const SingleEditor = ({ tab }) => {
         const { name, value } = e.target;
 
         // Font tab: coerce number fields back to numbers.
-        const numFields = ['size', 'titleSize', 'descSize', 'nameSize', 'sectionGap', 'sectionMarginBefore', 'sectionMarginAfter'];
-        const coerced = tab === 'font' && numFields.includes(name) ? Number(value) || value : value;
+        const numFields = ['size', 'titleSize', 'descSize', 'nameSize', 'breakerSize', 'sectionMarginBefore', 'sectionMarginAfter', 'companySize', 'roleSize', 'imageBottomGap'];
+        const coerced = tab === 'typography' && numFields.includes(name) ? Number(value) || value : value;
 
         dispatch(
             updateResumeValue({

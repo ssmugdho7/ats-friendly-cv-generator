@@ -19,7 +19,7 @@ const defaultResume = {
     template: DEFAULT_TEMPLATE,
     layout: DEFAULT_LAYOUT,
     photo: null,
-    font: { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 },
+    font: { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, sectionBreakerColor: '#e0e0e0', descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', headerAlign: 'center', imageBottomGap: 8 },
 
     saved: false,
 };
@@ -145,7 +145,7 @@ const resumeSlice = createSlice({
             state.hiddenSections = [];
             state.template = DEFAULT_TEMPLATE;
             state.layout = DEFAULT_LAYOUT;
-            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, sectionBreakerColor: '#e0e0e0', descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', headerAlign: 'center', imageBottomGap: 8 };
             state.saved = false;
         },
 
@@ -164,7 +164,7 @@ const resumeSlice = createSlice({
             state.hiddenSections = [];
             state.template = DEFAULT_TEMPLATE;
             state.layout = DEFAULT_LAYOUT;
-            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, sectionBreakerColor: '#e0e0e0', descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', headerAlign: 'center', imageBottomGap: 8 };
             state.photo = null;
             state.saved = false;
         },

@@ -19,7 +19,6 @@ const RichSegments = ({ text, font, tmpl }) => (
                 style={{
                     fontFamily: seg.bold ? getFont(font?.family, true) : getFont(font?.family, false),
                     color: seg.color || tmpl.text,
-                    textDecoration: font?.linkUnderline ? 'none' : 'none',
                 }}
             >
                 {seg.t}
@@ -150,7 +149,7 @@ const ContactLine = ({ contact, links, font, tmpl }) => {
                 <React.Fragment key={item.key}>
                     {i > 0 && <Text style={{ color: tmpl.light, fontFamily: getFont(font?.family), fontSize: 10 }}> | </Text>}
                     {item.value ? (
-                        <Link src={item.value} style={{ color: item.isLink ? linkColor : tmpl.accent, textDecoration: font?.linkUnderline && item.value.startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family), fontSize: 10 }}>
+                        <Link src={item.value} style={{ color: item.isLink ? linkColor : tmpl.accent, textDecoration: 'none', fontFamily: getFont(font?.family), fontSize: 10 }}>
                             {item.label}
                         </Link>
                     ) : (
@@ -216,7 +215,7 @@ const Projects = ({ data, font, tmpl }) => {
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
                         <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{project.title}</Text>
                         {project.github && (
-                            <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: font?.linkUnderline && normUrl(project.github).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }}>
+                            <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
                                 GitHub
                             </Link>
                         )}
@@ -328,7 +327,7 @@ const References = ({ data, font, tmpl }) => {
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: roleSize }}>
                         <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{name}</Text>
                         {website && (
-                            <Link src={normUrl(website)} style={{ color: tmpl.accent, fontSize: companySize, textDecoration: font?.linkUnderline && normUrl(website).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }}>
+                            <Link src={normUrl(website)} style={{ color: tmpl.accent, fontSize: companySize, textDecoration: 'none', fontFamily: getFont(font?.family) }}>
                                 Website
                             </Link>
                         )}
