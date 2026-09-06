@@ -3,6 +3,7 @@
 import React from 'react';
 import { Page, Text, View, Document, Link, Image } from '@react-pdf/renderer';
 import Section, { getFont } from '../Section';
+import ListItem from '../ListItem';
 import formatDate from '@/utils/formatDate';
 import { normUrl } from '@/utils/richText';
 import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
@@ -78,6 +79,40 @@ const ContactLine = ({ contact, font, tmpl }) => {
     );
 };
 
+const Description = ({ text, bullets, font, tmpl }) => {
+    const lines = String(text || '')
+        .split('\n')
+        .map(l => l.trim())
+        .filter(Boolean);
+    if (!lines.length) return null;
+    const descSize = font?.descSize || font?.size || 10;
+    const lineGap = font?.lineGap || 0;
+
+    if (bullets === false) {
+        return (
+            <View style={{ fontSize: descSize, marginTop: 2 }}>
+                {lines.map((line, i) => (
+                    <Text key={i} style={{ fontFamily: getFont(font?.family), fontSize: descSize, color: tmpl.text, marginTop: i ? lineGap : 4 }}>
+                        {line}
+                    </Text>
+                ))}
+            </View>
+        );
+    }
+
+    return (
+        <View style={{ fontSize: descSize, marginTop: 2 }}>
+            {lines.map((line, i) => (
+                <View key={i} style={{ marginTop: i ? lineGap : 0 }}>
+                    <ListItem font={font} tmpl={tmpl}>
+                        {line}
+                    </ListItem>
+                </View>
+            ))}
+        </View>
+    );
+};
+
 const Header = ({ data, tmpl, font, layout }) => {
     const nameSize = font?.nameSize || 28;
     const taglineSize = font?.descSize || font?.size || 12;
@@ -134,14 +169,7 @@ const Experience = ({ data, tmpl, font }) => {
                         <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text, fontSize: companySize }}>
                             {item.company}{item.location && `, ${item.location}`}
                         </Text>
-                        {item.description && (() => {
-                            const lines = String(item.description).split('\n').map(l => l.trim()).filter(Boolean);
-                            return lines.map((line, idx) => (
-                                <Text key={idx} style={{ fontFamily: getFont(font?.family), fontSize: descSize, color: tmpl.text, marginTop: idx ? lineGap : 4 }}>
-                                    {line}
-                                </Text>
-                            ));
-                        })()}
+                        <Description text={item.description} bullets={item.bullets} font={font} tmpl={tmpl} />
                     </View>
                 </React.Fragment>
             ))}
@@ -192,14 +220,7 @@ const Projects = ({ data, tmpl, font }) => {
                                 <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: companySize, textDecoration: 'none' }}>GitHub</Link>
                             )}
                         </View>
-                        {project.description && (() => {
-                            const lines = String(project.description).split('\n').map(l => l.trim()).filter(Boolean);
-                            return lines.map((line, idx) => (
-                                <Text key={idx} style={{ fontFamily: getFont(font?.family), fontSize: descSize, color: tmpl.text, marginTop: idx ? 2 : 2 }}>
-                                    {line}
-                                </Text>
-                            ));
-                        })()}
+                        <Description text={project.description} bullets={project.bullets} font={font} tmpl={tmpl} />
                     </View>
                 </React.Fragment>
             ))}
