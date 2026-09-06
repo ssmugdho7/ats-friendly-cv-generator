@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import resumeSlice from './slices/resumeSlice';
 import ResumeFields, { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
 import { DEFAULT_TEMPLATE, TEMPLATE_KEYS } from '@/config/templates';
-import { DEFAULT_LAYOUT, LAYOUT_KEYS } from '@/config/layouts';
 
 /**
  * Bring states saved by older app versions up to the current shape:
@@ -10,8 +9,6 @@ import { DEFAULT_LAYOUT, LAYOUT_KEYS } from '@/config/layouts';
  * - ensure the tagline section exists
  * - convert skills from the legacy `{ skills: '...' }` shape to grouped entries
  * - default existing project/experience descriptions to bullet mode
- * - ensure layout exists and is a valid key
- * - ensure achievements array exists
  */
 const migrateState = state => {
     if (!state || !state.resume) return state;
@@ -39,14 +36,14 @@ const migrateState = state => {
     }
     if (!Array.isArray(r.skills)) r.skills = [];
     if (!Array.isArray(r.references)) r.references = [];
-    if (!Array.isArray(r.achievements)) r.achievements = [];
+    if (!Array.isArray(r.education)) r.education = [];
+    if (!Array.isArray(r.experience)) r.experience = [];
+    if (!Array.isArray(r.projects)) r.projects = [];
+    if (!Array.isArray(r.certificates)) r.certificates = [];
+    if (!Array.isArray(r.languages)) r.languages = [];
 
     if (!r.template || !TEMPLATE_KEYS.includes(r.template)) {
         r.template = DEFAULT_TEMPLATE;
-    }
-
-    if (!r.layout || !LAYOUT_KEYS.includes(r.layout)) {
-        r.layout = DEFAULT_LAYOUT;
     }
 
     ['experience', 'projects'].forEach(tab => {
@@ -58,10 +55,10 @@ const migrateState = state => {
     });
 
     if (!r.font || typeof r.font !== 'object' || Array.isArray(r.font)) {
-        r.font = { family: 'Times-Roman', size: 10, titleSize: 13, descSize: 10, nameSize: 20, sectionGap: 8, sectionMarginBefore: 6, sectionMarginAfter: 4, linkColor: '#555555', linkUnderline: false };
+        r.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
     }
     // Fill any missing font keys from older saves
-    const fontDefaults = { family: 'Times-Roman', size: 10, titleSize: 13, descSize: 10, nameSize: 20, sectionGap: 8, sectionMarginBefore: 6, sectionMarginAfter: 4, linkColor: '#555555', linkUnderline: false };
+    const fontDefaults = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
     Object.keys(fontDefaults).forEach(k => {
         if (r.font[k] === undefined || r.font[k] === null) r.font[k] = fontDefaults[k];
     });

@@ -2,7 +2,6 @@
 
 import ResumeFields from '@/config/ResumeFields';
 import Link from 'next/link';
-import { FaCog, FaBars } from 'react-icons/fa';
 import {
     FaUser,
     FaTag,
@@ -18,7 +17,6 @@ import {
     FaUsers,
     FaPalette,
     FaTableColumns,
-    FaTrophy,
 } from 'react-icons/fa6';
 
 const TAB_ICONS = {
@@ -32,15 +30,14 @@ const TAB_ICONS = {
     certificates: FaCertificate,
     languages: FaLanguage,
     references: FaUsers,
-    achievements: FaTrophy,
     sections: FaStackExchange,
-    layout: FaTableColumns,
     template: FaPalette,
     font: FaFont,
+    layout: FaTableColumns,
 };
 
-const CONTENT_TABS = ['contact', 'tagline', 'summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references', 'achievements'];
-const SETTINGS_TABS = ['sections', 'layout', 'template', 'font'];
+const CONTENT_TABS = ['contact', 'tagline', 'summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references'];
+const SETTINGS_TABS = ['sections', 'template', 'layout', 'font'];
 
 const TabButton = ({ tab, activeTab, small }) => {
     const Icon = TAB_ICONS[tab];
@@ -79,18 +76,8 @@ const Tabs = ({ activeTab }) => {
                 ))}
             </div>
 
-            {/* Divider */}
-            <div className="flex items-center gap-3">
-                <div className="h-px flex-1 bg-gray-700/50" />
-                <span className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <FaCog className="h-3 w-3" />
-                    Settings
-                </span>
-                <div className="h-px flex-1 bg-gray-700/50" />
-            </div>
-
             {/* Settings tabs */}
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
                 {SETTINGS_TABS.map(tab => (
                     <TabButton key={tab} tab={tab} activeTab={activeTab} small />
                 ))}

@@ -1,144 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
 import { DEFAULT_TEMPLATE } from '@/config/templates';
-import { DEFAULT_LAYOUT, LAYOUT_KEYS } from '@/config/layouts';
-
-const SEED_CONTACT = {
-    name: 'Md. Shah Maruf Siraj Mugdho',
-    email: 'shahmarufsiraj360@gmail.com',
-    phone: '+880-1712-XXXXXX',
-    address: 'Dhaka, Bangladesh',
-    linkedin: 'https://www.linkedin.com/in/shahmarufsiraj360/',
-    github: 'https://github.com/ssmugdho7',
-    portfolio: 'https://shahmaruf-siraj-mugdho-profile.netlify.app/',
-    blogs: '',
-    twitter: '',
-};
-
-const SEED_TAGLINE = { tagline: 'Full Stack Web Developer' };
-
-const SEED_SUMMARY = { summary: 'Passionate full-stack web developer with hands-on experience building scalable web applications, AI-powered tools, and modern agency websites. Skilled in React, Next.js, Node.js, and Python with a strong focus on clean code, user experience, and ATS-friendly design.' };
-
-const SEED_EXPERIENCE = [
-    {
-        role: 'Full Stack Developer',
-        company: 'DLS Venture',
-        location: 'Dhaka, Bangladesh',
-        start: '2024-01',
-        end: '',
-        description: 'Developing and maintaining enterprise-grade e-trading platforms.\nCollaborating with cross-functional teams to deliver secure, scalable solutions.\nImplementing real-time data features and optimizing application performance.',
-        bullets: true,
-    },
-];
-
-const SEED_EDUCATION = [
-    {
-        degree: 'Bachelor of Science in Computer Science',
-        institution: 'University of Dhaka',
-        start: '2019-01',
-        end: '2023-12',
-        location: 'Dhaka, Bangladesh',
-        gpa: '3.5/4.0',
-    },
-];
-
-const SEED_PROJECTS = [
-    {
-        title: 'JobPilot',
-        url: 'https://jobpilot-hfpz.onrender.com/',
-        github: 'https://github.com/ssmugdho7/jobpilot',
-        live: 'https://jobpilot-hfpz.onrender.com/',
-        description: 'An intelligent job application tracking system with automated status updates and analytics dashboard.',
-        bullets: true,
-    },
-    {
-        title: 'AI Ebook Writer',
-        url: 'https://ebook-web-rgnw.onrender.com/',
-        github: 'https://github.com/ssmugdho7/ebook-generator-ai',
-        live: 'https://ebook-web-rgnw.onrender.com/',
-        description: 'AI-powered ebook generation platform with customizable templates, chapters, and export options.',
-        bullets: true,
-    },
-    {
-        title: 'Agency Website',
-        url: '',
-        github: '',
-        live: 'https://agency-app-self-two.vercel.app/',
-        description: 'Modern agency portfolio website with smooth animations, service showcases, and contact integration.',
-        bullets: true,
-    },
-    {
-        title: 'DLS Venture',
-        url: 'https://etrade.dls.gov.bd/',
-        github: '',
-        live: 'https://etrade.dls.gov.bd/',
-        description: 'Enterprise e-trading platform serving thousands of users with real-time market data and transaction processing.',
-        bullets: true,
-    },
-    {
-        title: 'KitQuest Web App',
-        url: '',
-        github: 'https://github.com/ssmugdho7/KitQuest-Web-App',
-        live: '',
-        description: 'Web-based kit management system for tracking inventory, requests, and deployments across teams.',
-        bullets: true,
-    },
-];
-
-const SEED_SKILLS = [
-    { title: 'Frontend', skills: 'React, Next.js, TypeScript, Tailwind CSS, HTML5, CSS3' },
-    { title: 'Backend', skills: 'Node.js, Express.js, Python, Django, REST APIs' },
-    { title: 'Database', skills: 'PostgreSQL, MongoDB, MySQL, Prisma' },
-    { title: 'AI/ML', skills: 'OpenAI API, LangChain, TensorFlow, PyTorch' },
-    { title: 'Tools', skills: 'Git, Docker, AWS, Vercel, Render, Figma' },
-];
-
-const SEED_CERTIFICATES = [
-    {
-        title: 'Web Development Bootcamp',
-        issuer: 'Online Learning Platform',
-        date: '2023-06',
-        url: 'https://drive.google.com/file/d/14hJDm0m1b5m8ZfO4fJyNyampM6fIDUGx/view?usp=sharing',
-    },
-];
-
-const SEED_LANGUAGES = [
-    { language: 'Bengali', proficiency: 'Native or Bilingual Proficiency' },
-    { language: 'English', proficiency: 'Professional Working Proficiency' },
-];
-
-const SEED_REFERENCES = [
-    {
-        name: 'Dr. A. K. M. Bahalul Haque',
-        role: 'Professor',
-        company: 'University of Dhaka',
-        contacts: 'bahalul@du.ac.bd\n+880-1XXXXXXXXX',
-        website: '',
-    },
-];
-
-const SEED_ACHIEVEMENTS = [
-    { label: 'Years Experience', value: '2+' },
-    { label: 'Projects Built', value: '10+' },
-    { label: 'Technologies', value: '15+' },
-];
+import { DEFAULT_LAYOUT } from '@/config/layouts';
 
 const defaultResume = {
-    contact: SEED_CONTACT,
-    tagline: SEED_TAGLINE,
-    summary: SEED_SUMMARY,
-    education: SEED_EDUCATION,
-    experience: SEED_EXPERIENCE,
-    projects: SEED_PROJECTS,
-    skills: SEED_SKILLS,
-    certificates: SEED_CERTIFICATES,
-    languages: SEED_LANGUAGES,
-    references: SEED_REFERENCES,
-    achievements: SEED_ACHIEVEMENTS,
+    contact: { phoneCountryCode: '+880', order: ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'] },
+    tagline: { tagline: '' },
+    summary: {},
+    education: [],
+    experience: [],
+    projects: [],
+    skills: [],
+    certificates: [],
+    languages: [],
+    references: [],
     sectionOrder: [...DEFAULT_SECTION_ORDER],
+    hiddenSections: [],
     template: DEFAULT_TEMPLATE,
     layout: DEFAULT_LAYOUT,
-    font: { family: 'Times-Roman', size: 10, titleSize: 13, descSize: 10, nameSize: 20, sectionGap: 8, sectionMarginBefore: 6, sectionMarginAfter: 4, linkColor: '#555555', linkUnderline: false },
+    photo: null,
+    font: { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 },
 
     saved: false,
 };
@@ -163,18 +44,23 @@ const resumeSlice = createSlice({
         addNewIndex: (state, action) => {
             const { tab, name, value } = action.payload;
             state[tab].push({});
+            // state[tab].push({ [name]: [value] });
             state.saved = false;
         },
 
         deleteIndex: (state, action) => {
             const { index, tab } = action.payload;
+            console.log('deleting', index, 'from', tab);
             state[tab].splice(index, 1);
             state.saved = false;
         },
 
+        // for move index
         moveIndex: (state, action) => {
             const { index, tab, dir } = action.payload;
+
             const newIndex = dir === 'up' ? index - 1 : index + 1;
+
             const temp = state[tab][index];
             state[tab][index] = state[tab][newIndex];
             state[tab][newIndex] = temp;
@@ -194,8 +80,101 @@ const resumeSlice = createSlice({
             [order[index], order[j]] = [order[j], order[index]];
             state.saved = false;
         },
+
+        toggleSectionVisibility: (state, action) => {
+            const { section } = action.payload;
+            const hidden = new Set(state.hiddenSections || []);
+            if (hidden.has(section)) {
+                hidden.delete(section);
+            } else {
+                hidden.add(section);
+            }
+            state.hiddenSections = Array.from(hidden);
+            state.saved = false;
+        },
+
+        updateContactOrder: (state, action) => {
+            state.contact.order = action.payload;
+            state.saved = false;
+        },
+
+        loadDemoResume: state => {
+            state.contact = {
+                name: 'Md. Shah Maruf Siraj Mugdho',
+                email: 'shahmarufsiraj@gmail.com',
+                phone: '1758551245',
+                phoneCountryCode: '+880',
+                address: 'Dhaka',
+                linkedin: 'linkedin.com/in/shahmarufsiraj360',
+                github: 'github.com/ssmugdho7',
+                portfolio: 'shahmaruf-siraj-mugdho-profile.netlify.app',
+                order: ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'],
+            };
+            state.tagline = { tagline: 'Full Stack Developer & Creative Technologist' };
+            state.summary = {
+                summary: 'Experienced developer specializing in building exceptional digital experiences. Proficient in React, Node.js, and modern web technologies.'
+            };
+            state.education = [
+                { degree: 'Bachelor of Science in Computer Science', institution: 'University of Technology', start: '2018-01', end: '2022-01', location: 'Dhaka, Bangladesh', gpa: '3.8/4.0' }
+            ];
+            state.experience = [
+                { role: 'Senior Software Engineer', company: 'Tech Solutions Inc.', location: 'Dhaka, Bangladesh', start: '2022-01', end: 'Present', description: 'Leading development of web applications using React and Node.js', bullets: true },
+                { role: 'Software Developer', company: 'Digital Innovations Ltd.', location: 'Dhaka, Bangladesh', start: '2020-01', end: '2022-01', description: 'Developed and maintained multiple client projects', bullets: true }
+            ];
+            state.projects = [
+                { title: 'Resume Builder', url: 'https://resumave.com', github: 'github.com/mugdho/resumave', live: 'https://resumave.com', description: 'A modern resume builder with multiple templates and layouts', bullets: true },
+                { title: 'Portfolio Website', url: 'https://mugdho.com', github: 'github.com/mugdho/portfolio', live: 'https://mugdho.com', description: 'Personal portfolio website with dark theme', bullets: true }
+            ];
+            state.skills = [
+                { title: 'Programming Languages', skills: 'JavaScript, TypeScript, Python, Java' },
+                { title: 'Frameworks', skills: 'React, Next.js, Node.js, Express' },
+                { title: 'Tools', skills: 'Git, Docker, AWS, MongoDB' }
+            ];
+            state.certificates = [
+                { title: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', date: '2023-01' },
+                { title: 'Google Cloud Professional', issuer: 'Google Cloud', date: '2022-06' }
+            ];
+            state.languages = [
+                { language: 'English', proficiency: 'Native or Bilingual Proficiency' },
+                { language: 'Bengali', proficiency: 'Native or Bilingual Proficiency' }
+            ];
+            state.references = [
+                { name: 'John Smith', role: 'Senior Manager', company: 'Tech Corp', contacts: 'john@example.com\n+1 234 567 890', website: 'https://linkedin.com/in/johnsmith' }
+            ];
+            state.sectionOrder = [...DEFAULT_SECTION_ORDER];
+            state.hiddenSections = [];
+            state.template = DEFAULT_TEMPLATE;
+            state.layout = DEFAULT_LAYOUT;
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
+            state.saved = false;
+        },
+
+        clearResume: state => {
+            state.contact = { phoneCountryCode: '+880', order: ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'] };
+            state.tagline = { tagline: '' };
+            state.summary = {};
+            state.education = [];
+            state.experience = [];
+            state.projects = [];
+            state.skills = [];
+            state.certificates = [];
+            state.languages = [];
+            state.references = [];
+            state.sectionOrder = [...DEFAULT_SECTION_ORDER];
+            state.hiddenSections = [];
+            state.template = DEFAULT_TEMPLATE;
+            state.layout = DEFAULT_LAYOUT;
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
+            state.photo = null;
+            state.saved = false;
+        },
+
+        updatePhoto: (state, action) => {
+            state.photo = action.payload;
+            state.saved = false;
+        },
     },
 });
 
-export const { updateResumeValue, addNewIndex, deleteIndex, moveSection, saveResume, moveIndex } = resumeSlice.actions;
+export const { updateResumeValue, addNewIndex, deleteIndex, moveSection, saveResume, moveIndex, toggleSectionVisibility, updateContactOrder, loadDemoResume, clearResume, updatePhoto } = resumeSlice.actions;
 export default resumeSlice.reducer;

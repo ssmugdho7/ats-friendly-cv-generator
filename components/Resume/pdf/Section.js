@@ -13,10 +13,12 @@ const getFont = (family, bold) => {
 
 const Section = ({ title, font, tmpl, children }) => {
     const titleSize = font?.titleSize || 13;
-    const marginBefore = font?.sectionMarginBefore ?? 6;
-    const marginAfter = font?.sectionMarginAfter ?? 4;
+    const titleWeight = font?.titleWeight || 'bold';
+    const breakerSize = font?.breakerSize || 1;
+    const marginBefore = font?.sectionMarginBefore ?? 8;
+    const marginAfter = font?.sectionMarginAfter ?? 6;
     const accent = tmpl?.accent || '#333';
-    const border = tmpl?.border || '#888';
+    const border = font?.sectionLineColor || tmpl?.border || '#888';
 
     const styles = StyleSheet.create({
         wrapper: {
@@ -26,11 +28,11 @@ const Section = ({ title, font, tmpl, children }) => {
             textTransform: 'uppercase',
             color: accent,
             fontSize: titleSize,
-            fontFamily: getFont(font?.family, true),
+            fontFamily: getFont(font?.family, titleWeight === 'bold'),
             marginTop: marginBefore,
         },
         section_title_underline: {
-            height: 1,
+            height: breakerSize,
             margin: '2px 0px 4px 0px',
             backgroundColor: border,
         },

@@ -7,7 +7,7 @@ import { useRef, useState } from 'react';
 
 /** Small Bold / Color toolbar. Buttons use onMouseDown-preventDefault so the
  *  text selection in the field underneath is preserved when they are clicked. */
-const RichToolbar = ({ color, setColor, onBold, onColor }) => (
+const RichToolbar = ({ onBold }) => (
     <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-gray-400">
         <button
             type="button"
@@ -18,28 +18,8 @@ const RichToolbar = ({ color, setColor, onBold, onColor }) => (
         >
             B
         </button>
-        <span className="flex items-center gap-1 rounded-md border border-gray-600/50 bg-gray-700/50 px-2 py-1">
-            <input
-                type="color"
-                title="Pick a text color"
-                value={color}
-                onChange={e => setColor(e.target.value)}
-                onMouseDown={e => e.stopPropagation()}
-                className="h-4 w-6 cursor-pointer bg-transparent"
-            />
-            <button
-                type="button"
-                title="Apply the picked color to the selected text"
-                onMouseDown={e => e.preventDefault()}
-                onClick={onColor}
-                className="font-bold transition-all hover:opacity-80"
-                style={{ color }}
-            >
-                A
-            </button>
-        </span>
         <span className="text-gray-500">
-            **bold** · [color=#e11d48]colored[/color] · one line = one bullet
+            **bold** · one line = one bullet
         </span>
     </div>
 );
@@ -97,10 +77,6 @@ const Input = ({ label, name, type, placeholder, options, span, rich, value, ...
 
     const isEditable = type === 'textarea' && props.multipoints;
     const doBold = () => (isEditable ? wrapEditable('**', '**') : wrapPlain('**', '**'));
-    const doColor = () =>
-        isEditable
-            ? wrapEditable(`[color=${formatColor}]`, '[/color]')
-            : wrapPlain(`[color=${formatColor}]`, '[/color]');
 
     // Props safe to spread onto native inputs (multipoints/rich are editor-only).
     const { multipoints, ...domProps } = props;
@@ -139,9 +115,6 @@ const Input = ({ label, name, type, placeholder, options, span, rich, value, ...
         // }
 
         if (type === 'textarea' && props.multipoints) {
-            // <ul className='space-y-1.5 list-disc pl-5'></ul>
-            // <li className="relative ml-[10px] leading-[1.35em] before:absolute before:left-[-10px] before:content-['•']"></li>;
-
             const html = `
                 <ul class="space-y-1.5 list-disc pl-4 md:pl-5">
                     ${value
@@ -161,7 +134,7 @@ const Input = ({ label, name, type, placeholder, options, span, rich, value, ...
             return (
                 <div>
                     {rich && (
-                        <RichToolbar color={formatColor} setColor={setFormatColor} onBold={doBold} onColor={doColor} />
+                        <RichToolbar onBold={doBold} />
                     )}
                     <ContentEditable
                         role="textbox"
@@ -181,18 +154,17 @@ const Input = ({ label, name, type, placeholder, options, span, rich, value, ...
             return (
                 <div>
                     {rich && (
-                        <RichToolbar color={formatColor} setColor={setFormatColor} onBold={doBold} onColor={doColor} />
+                        <RichToolbar onBold={doBold} />
                     )}
                     <textarea
                         id={name}
                         name={name}
                         ref={textRef}
                         placeholder={placeholder}
-                        className={twMerge(inputClassName, 'min-h-56 text-sm md:min-h-40')}
+                        className={twMerge(inputClassName, 'min-h-56 text-sm md:min-h-40 md:text-base')}
+                        value={value}
                         {...domProps}
-                    >
-                        {value}
-                    </textarea>
+                    />
                 </div>
             );
         }
@@ -204,7 +176,7 @@ const Input = ({ label, name, type, placeholder, options, span, rich, value, ...
                     name={name}
                     placeholder={placeholder}
                     className={inputClassName}
-                    defaultValue={value}
+                    value={value}
                     {...domProps}
                 >
                     {options?.map(option => (

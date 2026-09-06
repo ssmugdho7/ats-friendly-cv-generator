@@ -1,4 +1,8 @@
+'use client';
+
 import dynamic from 'next/dynamic';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadDemoResume, clearResume } from '@/store/slices/resumeSlice';
 import Editor from '@/components/Editor';
 import Tabs from '@/components/Tabs';
 
@@ -15,10 +19,31 @@ const Preview = dynamic(() => import('@/components/Resume/Preview'), {
 });
 
 const page = ({ searchParams: { tab = 'contact' } }) => {
+    const dispatch = useDispatch();
+
     return (
         <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-screen-2xl flex-col gap-6 px-4 py-6 lg:flex-row lg:gap-8 lg:px-6">
             {/* Editor Panel - Left */}
             <div className="flex min-w-0 flex-1 flex-col lg:max-w-[55%]">
+                <div className="mb-4 flex items-center justify-between">
+                    <h1 className="text-xl font-bold text-gray-100">Resume Editor</h1>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => dispatch(clearResume())}
+                            className="rounded-lg border border-red-500/50 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20"
+                        >
+                            Clear All
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => dispatch(loadDemoResume())}
+                            className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-500"
+                        >
+                            Load Demo CV
+                        </button>
+                    </div>
+                </div>
                 <Tabs activeTab={tab} />
                 <div className="flex-1">
                     <Editor tab={tab} />

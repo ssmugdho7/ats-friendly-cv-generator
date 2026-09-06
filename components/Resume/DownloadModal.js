@@ -8,6 +8,7 @@ import { pdf } from '@react-pdf/renderer';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { FaXmark, FaDownload, FaFileWord, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { downloadResumeDocx } from '@/utils/generateDocx';
+import { filterPdfPages } from '@/utils/pdf';
 
 if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
     try {
@@ -47,6 +48,7 @@ const DownloadModal = ({ open, onClose }) => {
     const [marginPreset, setMarginPreset] = useState(0);
     const [customMargin, setCustomMargin] = useState(30);
     const [scale, setScale] = useState(100);
+    const [pageMode, setPageMode] = useState('all');
 
     const [pdfUrl, setPdfUrl] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -114,14 +116,22 @@ const DownloadModal = ({ open, onClose }) => {
     const goPrev = () => setPageNumber(p => Math.max(1, p - 1));
     const goNext = () => setPageNumber(p => (numPages ? Math.min(numPages, p + 1) : p + 1));
 
-    const handleDownloadPdf = () => {
+    const handleDownloadPdf = async () => {
         if (!pdfUrl) return;
-        const a = window.document.createElement('a');
-        a.href = pdfUrl;
-        a.download = `${resumeData.contact?.name || 'resume'}.pdf`;
-        window.document.body.appendChild(a);
-        a.click();
-        a.remove();
+        try {
+            const original = await (await fetch(pdfUrl)).blob();
+            const finalBlob = await filterPdfPages(original, pageMode);
+            const url = URL.createObjectURL(finalBlob);
+            const a = window.document.createElement('a');
+            a.href = url;
+            a.download = `${resumeData.contact?.name || 'resume'}.pdf`;
+            window.document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        } catch (err) {
+            console.error('Failed to download PDF', err);
+        }
     };
 
     const handleDownloadDocx = async () => {
@@ -183,6 +193,31 @@ const DownloadModal = ({ open, onClose }) => {
                                     </button>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* Pages */}
+                        <div>
+                            <label className="mb-2 block text-sm font-medium text-gray-300">Download Pages</label>
+                            <div className="flex gap-2">
+                                {[
+                                    { key: 'all', label: 'All' },
+                                    { key: 'odd', label: 'Odd only' },
+                                    { key: 'even', label: 'Even only' },
+                                ].map(option => (
+                                    <button
+                                        key={option.key}
+                                        onClick={() => setPageMode(option.key)}
+                                        className={`flex-1 rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
+                                            pageMode === option.key
+                                                ? 'border-primary-500 bg-primary-500/10 text-primary-400'
+                                                : 'border-gray-700 bg-gray-800/50 text-gray-400 hover:border-gray-600 hover:text-gray-300'
+                                        }`}
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <p className="mt-2 text-xs text-gray-500">Useful when extra blank pages are generated. For example, choose "Odd only" to download just the first page of a two-page resume.</p>
                         </div>
 
                         {/* Margin */}

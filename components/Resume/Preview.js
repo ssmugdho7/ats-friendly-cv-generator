@@ -50,7 +50,7 @@ const Preview = () => {
 
         const generate = () => {
             setLoading(true);
-            const doc = <Resume data={resumeData} />;
+            const doc = <Resume data={resumeData} layout={resumeData.layout} hiddenSections={resumeData.hiddenSections || []} />;
             pdf(doc)
                 .toBlob()
                 .then(blob => {
@@ -61,6 +61,10 @@ const Preview = () => {
                         return url;
                     });
                     setPageNumber(1);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    if (cancelled) return;
                     setLoading(false);
                 });
         };

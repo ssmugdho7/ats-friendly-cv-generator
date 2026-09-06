@@ -1,20 +1,22 @@
-export const DEFAULT_SECTION_ORDER = ['summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references', 'achievements'];
+export const DEFAULT_SECTION_ORDER = ['summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references'];
 
 import { TEMPLATE_KEYS } from './templates';
+import { LAYOUT_KEYS } from './layouts';
 
 export default {
     contact: {
         name: 'Contact',
+        custom: 'ContactOrderEditor',
         fields: [
             { name: 'name', label: 'Full Name', placeholder: 'John Doe', required: true },
             { name: 'email', label: 'Email', type: 'email', placeholder: 'john.doe@example.com' },
-            { name: 'phone', label: 'Phone', type: 'tel', placeholder: '+1234567890' },
+            { name: 'phone', label: 'Phone', type: 'tel', placeholder: '1712345678' },
+            { name: 'phoneCountryCode', label: 'Phone Country Code', placeholder: '+880' },
             { name: 'address', label: 'Address', placeholder: '123 Street, City, Country' },
-            { name: 'linkedin', label: 'Linked', placeholder: 'linkedin.com/in/johndoe' },
-            { name: 'github', label: 'Github', placeholder: 'github.com/johndoe' },
-            { name: 'blogs', label: 'Blogs', placeholder: 'github.com/johndoe' },
-            { name: 'twitter', label: 'Twitter', placeholder: 'github.com/johndoe' },
+            { name: 'linkedin', label: 'LinkedIn', placeholder: 'linkedin.com/in/johndoe' },
+            { name: 'github', label: 'GitHub', placeholder: 'github.com/johndoe' },
             { name: 'portfolio', label: 'Portfolio', placeholder: 'johndoe.com' },
+            { name: 'photo', label: 'Profile Photo URL', placeholder: 'https://example.com/photo.jpg', span: true },
         ],
     },
     tagline: {
@@ -88,7 +90,6 @@ export default {
         multiple: true,
         fields: [
             { name: 'title', label: 'Project Title', placeholder: 'Project Name' },
-            { name: 'url', label: 'Project Url', placeholder: 'https://example.com/project' },
             { name: 'github', label: 'Github Link', placeholder: 'github.com/johndoe/project' },
             { name: 'live', label: 'Live Link', placeholder: 'https://myproject.com' },
             {
@@ -195,30 +196,21 @@ export default {
         ],
     },
 
-    achievements: {
-        name: 'Achievements',
-        multiple: true,
-        fields: [
-            { name: 'label', label: 'Label (e.g. Years Experience)', placeholder: 'Years Experience' },
-            { name: 'value', label: 'Value (e.g. 8+)', placeholder: '8+' },
-        ],
-    },
-
     sections: {
         name: 'Sections',
         custom: 'SectionManager',
         fields: [],
     },
 
-    layout: {
-        name: 'Layout',
-        custom: 'LayoutSelector',
-        fields: [],
-    },
-
     template: {
         name: 'Template',
         custom: 'TemplateSelector',
+        fields: [],
+    },
+
+    layout: {
+        name: 'Layout',
+        custom: 'LayoutSelector',
         fields: [],
     },
 
@@ -244,13 +236,33 @@ export default {
             },
             { name: 'nameSize', label: 'Name Size', type: 'number', placeholder: '20' },
             { name: 'titleSize', label: 'Section Title Size', type: 'number', placeholder: '13' },
+            { name: 'titleWeight', label: 'Section Title Weight', type: 'select', options: [
+                { value: 'normal', name: 'Normal' },
+                { value: 'bold', name: 'Bold' },
+            ]},
+            { name: 'breakerSize', label: 'Section Line Thickness', type: 'number', placeholder: '1' },
             { name: 'size', label: 'Body Font Size', type: 'number', placeholder: '10' },
             { name: 'descSize', label: 'Description Font Size', type: 'number', placeholder: '10' },
-            { name: 'sectionGap', label: 'Gap Between Sections', type: 'number', placeholder: '8' },
-            { name: 'sectionMarginBefore', label: 'Space Before Section', type: 'number', placeholder: '6' },
-            { name: 'sectionMarginAfter', label: 'Space After Section', type: 'number', placeholder: '4' },
+            { name: 'companySize', label: 'Company/Institution Size', type: 'number', placeholder: '10' },
+            { name: 'roleSize', label: 'Role/Project Title Size', type: 'number', placeholder: '12' },
+            { name: 'sectionMarginBefore', label: 'Space Before Section', type: 'number', placeholder: '0' },
+            { name: 'sectionMarginAfter', label: 'Space After Section', type: 'number', placeholder: '0' },
             { name: 'linkColor', label: 'Link Color', type: 'color', placeholder: '#555555' },
             { name: 'linkUnderline', label: 'Underline Links', type: 'checkbox' },
+            { name: 'sectionLineColor', label: 'Section Line Color', type: 'color', placeholder: '#e0e0e0' },
+            { name: 'contactAlign', label: 'Contact Align', type: 'select', options: [
+                { value: 'left', name: 'Left' },
+                { value: 'center', name: 'Center' },
+                { value: 'right', name: 'Right' },
+                { value: 'justify', name: 'Justify' },
+            ]},
+            { name: 'taglineAlign', label: 'Tagline Align', type: 'select', options: [
+                { value: 'left', name: 'Left' },
+                { value: 'center', name: 'Center' },
+                { value: 'right', name: 'Right' },
+                { value: 'justify', name: 'Justify' },
+            ]},
+            { name: 'imageBottomGap', label: 'Image Bottom Gap (Modern Layout)', type: 'number', placeholder: '8' },
         ],
     },
 };

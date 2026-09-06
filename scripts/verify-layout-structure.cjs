@@ -19,11 +19,7 @@ const path = require('path');
 
 const LAYOUTS_DIR = path.join(__dirname, '..', 'components', 'Resume', 'pdf', 'layouts');
 const LAYOUT_FILES = {
-    'sidebar-executive': 'SidebarExecutive.js',
     'photo-header': 'PhotoHeader.js',
-    'minimal-timeline': 'MinimalTimeline.js',
-    'stat-highlight': 'IconStatHighlight.js',
-    'compact-sidebar': 'CompactSidebar.js',
 };
 
 const LAYOUT_ROUTER = path.join(__dirname, '..', 'components', 'Resume', 'pdf', 'layouts', 'LayoutRouter.js');
@@ -102,24 +98,6 @@ function verifyLayoutStructure(layoutKey, fileName) {
 
     // Layout-specific checks
     switch (layoutKey) {
-        case 'sidebar-executive':
-            result.checks.sidebarWidth32 = content.includes('32%') || content.includes("'32%'");
-            result.checks.sidebarBg = content.includes('sidebarBg');
-            result.checks.sidebarText = content.includes('sidebarText');
-            result.checks.sidebarRule = content.includes('sidebarRule');
-            result.checks.photoCircle = content.includes('InitialsCircle');
-            result.checks.skillPills = content.includes('SkillPill') || content.includes('paddingHorizontal');
-            result.checks.atsDomOrder = content.includes('FIRST in DOM') || content.includes('first in DOM');
-            result.checks.certUrl = content.includes('cert.url') || content.includes('certification_');
-            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
-            if (!result.checks.sidebarWidth32) { result.issues.push('Missing 32% sidebar width'); result.passed = false; }
-            if (!result.checks.sidebarBg) { result.issues.push('Missing sidebarBg theme variable'); result.passed = false; }
-            if (!result.checks.photoCircle) { result.issues.push('Missing InitialsCircle photo placeholder'); result.passed = false; }
-            if (!result.checks.atsDomOrder) { result.issues.push('Missing ATS DOM order comment'); result.passed = false; }
-            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
-            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
-            break;
-
         case 'photo-header':
             result.checks.headerBand = content.includes('bandBg');
             result.checks.photoInHeader = content.includes('InitialsCircle');
@@ -129,45 +107,6 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.headerBand) { result.issues.push('Missing header band with bandBg'); result.passed = false; }
             if (!result.checks.twoColumnBody) { result.issues.push('Missing two-column body'); result.passed = false; }
-            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
-            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
-            break;
-
-        case 'minimal-timeline':
-            result.checks.timelineDot = content.includes('timelineDot');
-            result.checks.timelineLine = content.includes('timelineLine');
-            result.checks.timelineEntry = content.includes('TimelineEntry') || content.includes('TIMELINE_DOT_SIZE');
-            result.checks.singleColumn = !content.includes('sidebar') && !content.includes('SIDEBAR');
-            result.checks.certUrl = content.includes('cert.url');
-            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
-            if (!result.checks.timelineDot) { result.issues.push('Missing timelineDot theme variable'); result.passed = false; }
-            if (!result.checks.timelineEntry) { result.issues.push('Missing TimelineEntry component'); result.passed = false; }
-            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
-            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
-            break;
-
-        case 'stat-highlight':
-            result.checks.statBoxes = content.includes('StatBox') || content.includes('statBorder');
-            result.checks.iconBadge = content.includes('iconChar');
-            result.checks.ruleLine = content.includes('borderTopWidth') || content.includes('borderBottomWidth');
-            result.checks.rightColumn = content.includes('borderLeftWidth');
-            result.checks.certUrl = content.includes('cert.url');
-            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
-            if (!result.checks.statBoxes) { result.issues.push('Missing StatBox component'); result.passed = false; }
-            if (!result.checks.iconBadge) { result.issues.push('Missing icon badge headers'); result.passed = false; }
-            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
-            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
-            break;
-
-        case 'compact-sidebar':
-            result.checks.sidebarWidth28 = content.includes('28%') || content.includes("'28%'");
-            result.checks.tintBg = content.includes('tintBg');
-            result.checks.compactSpacing = content.includes('marginBottom: 4') || content.includes('marginBottom: 6');
-            result.checks.skillPills = content.includes('SkillPill');
-            result.checks.certUrl = content.includes('cert.url');
-            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
-            if (!result.checks.sidebarWidth28) { result.issues.push('Missing 28% sidebar width'); result.passed = false; }
-            if (!result.checks.tintBg) { result.issues.push('Missing tintBg theme variable'); result.passed = false; }
             if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
             if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
@@ -186,7 +125,7 @@ function verifyLayoutRouter() {
         return result;
     }
 
-    const layouts = ['sidebar-executive', 'photo-header', 'minimal-timeline', 'stat-highlight', 'compact-sidebar'];
+    const layouts = ['photo-header'];
     for (const layout of layouts) {
         result.checks[`imports_${layout}`] = content.includes(`${layout}`) || content.includes(layout.replace('-', ''));
         result.checks[`routes_${layout}`] = content.includes(`'${layout}'`);
@@ -272,7 +211,7 @@ function verifyConfigLayouts() {
         return result;
     }
 
-    const expectedLayouts = ['sidebar-executive', 'photo-header', 'minimal-timeline', 'stat-highlight', 'compact-sidebar'];
+    const expectedLayouts = ['classic', 'modern'];
     for (const layout of expectedLayouts) {
         result.checks[`layout_${layout}`] = content.includes(`'${layout}'`);
         if (!result.checks[`layout_${layout}`]) {
