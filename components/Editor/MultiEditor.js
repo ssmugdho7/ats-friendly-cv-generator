@@ -12,18 +12,19 @@ import { FaArrowDown } from 'react-icons/fa';
 import { TbArrowsMinimize } from 'react-icons/tb';
 
 const MultiEditor = ({ tab }) => {
-    const { fields } = ResumeFields[tab];
+    const stateKey = tab === 'typography' ? 'font' : tab;
+    const { fields } = ResumeFields[stateKey] || {};
     const [selectedCard, setSelectedCard] = useState(null);
 
     const dispatch = useDispatch();
-    const resumeData = useSelector(state => state.resume[tab]);
+    const resumeData = useSelector(state => state.resume[stateKey]);
 
     const handleChange = (e, i) => {
         const { name, value } = e.target;
 
         dispatch(
             updateResumeValue({
-                tab,
+                tab: stateKey,
                 name,
                 value,
                 index: i,
@@ -34,7 +35,7 @@ const MultiEditor = ({ tab }) => {
     const addNew = () => {
         dispatch(
             addNewIndex({
-                tab,
+                tab: stateKey,
                 name: 'degree',
                 value: 'new',
             }),
@@ -44,7 +45,7 @@ const MultiEditor = ({ tab }) => {
     };
 
     const deleteCard = index => {
-        dispatch(deleteIndex({ tab, index }));
+        dispatch(deleteIndex({ tab: stateKey, index }));
         setSelectedCard(null);
     };
 
@@ -56,7 +57,7 @@ const MultiEditor = ({ tab }) => {
                 onClick={addNew}
             >
                 <LuPlus className="h-4 w-4" />
-                <span>Add New {ResumeFields[tab]?.name || tab}</span>
+                <span>Add New {ResumeFields[stateKey]?.name || tab}</span>
             </button>
 
             {resumeData?.length === 0 && (
@@ -89,7 +90,7 @@ const MultiEditor = ({ tab }) => {
                                     className="rounded p-1.5 text-gray-500 transition-colors hover:bg-gray-600/50 hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30"
                                     onClick={e => {
                                         e.stopPropagation();
-                                        dispatch(moveIndex({ tab, index: i, dir: 'up' }));
+                                        dispatch(moveIndex({ tab: stateKey, index: i, dir: 'up' }));
                                     }}
                                 >
                                     <FaArrowUp className="h-3.5 w-3.5" />
@@ -100,7 +101,7 @@ const MultiEditor = ({ tab }) => {
                                     className="rounded p-1.5 text-gray-500 transition-colors hover:bg-gray-600/50 hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30"
                                     onClick={e => {
                                         e.stopPropagation();
-                                        dispatch(moveIndex({ tab, index: i, dir: 'down' }));
+                                        dispatch(moveIndex({ tab: stateKey, index: i, dir: 'down' }));
                                     }}
                                 >
                                     <FaArrowDown className="h-3.5 w-3.5" />

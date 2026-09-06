@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 
 const Editor = ({ tab }) => {
     const dispatch = useDispatch();
+    const stateKey = tab === 'typography' ? 'font' : tab;
 
     // Auto-save every 10 seconds
     useEffect(() => {
@@ -22,7 +23,7 @@ const Editor = ({ tab }) => {
         return () => clearInterval(interval);
     }, [dispatch]);
 
-    const { custom, multiple } = ResumeFields[tab] || {};
+    const { custom, multiple } = ResumeFields[stateKey] || {};
 
     if (custom === 'SectionManager') {
         return (
@@ -58,8 +59,8 @@ const Editor = ({ tab }) => {
 
     return (
         <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 p-5 shadow-xl backdrop-blur-sm md:p-6">
-            {multiple && <MultiEditor tab={tab} />}
-            {!multiple && <SingleEditor tab={tab} />}
+            {multiple && <MultiEditor tab={stateKey} />}
+            {!multiple && <SingleEditor tab={stateKey} />}
         </div>
     );
 };
