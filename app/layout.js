@@ -5,12 +5,12 @@ import ReduxProvider from '@/store/ReduxProvider';
 import {GoogleAnalytics} from '@next/third-parties/google'
 
 export const metadata = {
-    metadataBase: 'http://resumave.vercel.app',
-    title: 'Free Resume Maker | Resumave',
+    metadataBase: 'http://cvgen-project.vercel.app',
+    title: 'Free Resume Maker | CVGen Project',
     description:
         'Our tool helps you create a resume that works with job application systems. It makes sure you look good to employers.',
     openGraph: {
-        title: 'Resumave',
+        title: 'CVGen Project',
         images: `/banner.png`,
         icons: {
             icon: `/favicon.png`,

@@ -6,8 +6,7 @@ import { useSelector } from 'react-redux';
 import { CgSpinner } from 'react-icons/cg';
 import { pdf } from '@react-pdf/renderer';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { FaXmark, FaDownload, FaFileWord, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
-import { downloadResumeDocx } from '@/utils/generateDocx';
+import { FaXmark, FaDownload, FaChevronLeft, FaChevronRight } from 'react-icons/fa6';
 import { filterPdfPages } from '@/utils/pdf';
 
 if (typeof window !== 'undefined' && pdfjs?.GlobalWorkerOptions) {
@@ -45,17 +44,16 @@ const DownloadModal = ({ open, onClose }) => {
     const previewRef = useRef(null);
 
     const [paperSize, setPaperSize] = useState('A4');
-    const [marginPreset, setMarginPreset] = useState(0);
-    const [customMargin, setCustomMargin] = useState(30);
-    const [scale, setScale] = useState(100);
-    const [pageMode, setPageMode] = useState('all');
+    const [marginPreset, setMarginPreset] = useState(2);
+    const [customMargin, setCustomMargin] = useState(36);
+    const [scale, setScale] = useState(125);
+    const [pageMode, setPageMode] = useState('odd');
 
     const [pdfUrl, setPdfUrl] = useState(null);
     const [loading, setLoading] = useState(true);
     const [generating, setGenerating] = useState(false);
     const [pageNumber, setPageNumber] = useState(1);
     const [numPages, setNumPages] = useState(null);
-    const [docxBusy, setDocxBusy] = useState(false);
 
     const margin = marginPreset === -1 ? customMargin : marginPreset;
 
@@ -131,16 +129,6 @@ const DownloadModal = ({ open, onClose }) => {
             setTimeout(() => URL.revokeObjectURL(url), 1000);
         } catch (err) {
             console.error('Failed to download PDF', err);
-        }
-    };
-
-    const handleDownloadDocx = async () => {
-        if (docxBusy) return;
-        setDocxBusy(true);
-        try {
-            await downloadResumeDocx(resumeData, { paperSize, margin });
-        } finally {
-            setDocxBusy(false);
         }
     };
 
@@ -283,18 +271,6 @@ const DownloadModal = ({ open, onClose }) => {
                             >
                                 <FaDownload className="h-4 w-4" />
                                 Download PDF
-                            </button>
-                            <button
-                                onClick={handleDownloadDocx}
-                                disabled={docxBusy}
-                                className="flex items-center justify-center gap-2 rounded-xl border border-gray-600 bg-gray-800 px-4 py-3 text-sm font-semibold text-gray-300 transition-all hover:border-gray-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                                {docxBusy ? (
-                                    <CgSpinner className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <FaFileWord className="h-4 w-4" />
-                                )}
-                                {docxBusy ? 'Generating...' : 'Download DOCX'}
                             </button>
                         </div>
                     </div>

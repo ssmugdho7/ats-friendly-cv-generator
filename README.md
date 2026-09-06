@@ -1,19 +1,19 @@
-<!-- ## Resumave -->
+<!-- ## CVGen Project -->
 
-<!-- Resumave is an ATS-friendly resume maker designed to simplify the process of creating professional resumes without the hassle of login or sign-up. With Resumave, users can easily input their details, generate a well-formatted resume, and export it in A4 PDF format. -->
+<!-- CVGen Project is an ATS-friendly resume maker designed to simplify the process of creating professional resumes without the hassle of login or sign-up. With CVGen Project, users can easily input their details, generate a well-formatted resume, and export it in A4 PDF format. -->
 
-<h1 align="center">Resumave</h1>
+<h1 align="center">CVGen Project</h1>
 <h3 align="center">An ATS-friendly resume maker</h3>
 
 <p align="center">
  <a href="https://resumave.vercel.app/">View Demo</a>
     ·
-    <a href="https://github.com/devXprite/resumave/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
+    <a href="https://github.com/ssmugdho7/ats-friendly-cv-generator/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
 </p>
 <br/>
 
 
-<p>Resumave is an ATS-friendly resume maker designed to simplify the process of creating professional resumes without the hassle of login or sign-up. With Resumave, users can easily input their details, generate a well-formatted resume, and export it in A4 PDF format. </p>
+<p>CVGen Project is an ATS-friendly resume maker designed to simplify the process of creating professional resumes without the hassle of login or sign-up. With CVGen Project, users can easily input their details, generate a well-formatted resume, and export it in A4 PDF format. </p>
 
 
 ## Features
@@ -38,24 +38,24 @@
 <img src="./public/screenshots/2.png" width="75%" />
 
 ## Installation
-If you want to run Resumave locally, follow these steps:
+If you want to run CVGen Project locally, follow these steps:
 
 1. Clone the repository:
-   ```bash
-    git clone https://github.com/devxprite/resumave.git
-   ```
+    ```bash
+     git clone https://github.com/ssmugdho7/ats-friendly-cv-generator.git
+    ```
 
 2. Navigate to the project directory:
-    ```bash
-    cd resumave
+     ```bash
+     cd resumave
     ```
 3. Install dependencies:
-    ```bash
-    npm install
+     ```bash
+     npm install
     ```
 4. Start the development server:
-    ```bash
-    npm run dev
+     ```bash
+     npm run dev
     ```
 5. Open your browser and visit `http://localhost:3000`
    
@@ -66,7 +66,7 @@ Contributions are welcome! If you encounter any issues or have suggestions for i
 
 
 ## Usage
-To use Resumave, simply visit [resumave.vercel.app](https://resumave.vercel.app) and start filling out your details. Once complete, you can export your resume in PDF format.
+To use CVGen Project, simply visit [resumave.vercel.app](https://resumave.vercel.app) and start filling out your details. Once complete, you can export your resume in PDF format.
 
 ## License
 This project is licensed under the MIT License. see the LICENSE file for details.

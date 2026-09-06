@@ -22,9 +22,9 @@ const page = () => {
                     </span>
                 </p> */}
                 <p className="mt-3 max-w-screen-sm text-sm text-gray-300 md:mt-10 md:text-lg">
-                    Resumave is an ATS-friendly resume maker designed to simplify the process of creating professional
+                    CVGen Project is an ATS-friendly resume maker designed to simplify the process of creating professional
                     <span className="hidden md:inline">
-                        resumes without the hassle of login or sign-up. With Resumave, users can easily input their
+                        resumes without the hassle of login or sign-up. With CVGen Project, users can easily input their
                         details, generate a well-formatted resume, and export it in A4 PDF format.
                     </span>
                 </p>
@@ -35,7 +35,7 @@ const page = () => {
                         <IoIosRocket />
                     </Link>
 
-                    <a href="https://github.com/devXprite/resumave" className="btn w-full md:w-auto">
+                    <a href="https://github.com/ssmugdho7/ats-friendly-cv-generator" className="btn w-full md:w-auto">
                         <span>View Source</span>
                         <FaGithub />
                     </a>
