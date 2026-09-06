@@ -5,7 +5,7 @@ const Header = () => {
     return (
         <header className="mx-auto flex max-w-screen-2xl items-center border-b border-gray-700/30 px-4 py-3 lg:px-6">
             <Link href={'/'} className="mr-auto text-xl font-bold tracking-tight">
-                <span className="text-gradient">CVGen Project</span>
+                <span className="text-gradient">CVGen</span>
             </Link>
             <a
                 href="https://github.com/ssmugdho7/ats-friendly-cv-generator"
