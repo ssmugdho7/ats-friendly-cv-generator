@@ -13,9 +13,10 @@
  *   - Timeline uses @react-pdf drawn elements (View with backgroundColor)
  *   - Section titles uppercase with thin underline
  *   - Contact links in a centered horizontal row with labels
+ *   - Placeholders resolved against data model
  */
 import { Text, View, Document, Page, Link, StyleSheet } from '@react-pdf/renderer';
-import { getLayoutTheme, contactRows } from './normalize';
+import { getLayoutTheme, contactRows, resolvePlaceholders } from './normalize';
 import {
     font,
     RichSegments,
@@ -26,6 +27,9 @@ import {
     dateRange,
     ContactItem,
 } from './primitives';
+import { normUrl } from '@/utils/richText';
+
+const resolve = (text, data) => resolvePlaceholders(text, data);
 
 const TIMELINE_DOT_SIZE = 7;
 const TIMELINE_LINE_W = 1;
@@ -63,7 +67,7 @@ const TimelineEntry = ({ entry, index, isLast, theme, f, showTimeline }) => (
         <View style={{ flex: 1, paddingBottom: 4 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <Text style={{ flex: 1, fontSize: f?.size || 11, fontFamily: font(null, true, f), color: theme.text }}>
-                    {entry.role || entry.title || entry.degree || ''}
+                    {resolve(entry.role || entry.title || entry.degree || '', data)}
                 </Text>
                 <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light, fontStyle: 'italic' }}>
                     {dateRange(entry.start, entry.end || entry.date)}
@@ -72,15 +76,15 @@ const TimelineEntry = ({ entry, index, isLast, theme, f, showTimeline }) => (
             {/* Sub line: company / institution / issuer */}
             {(entry.company || entry.institution || entry.issuer) ? (
                 <Text style={{ fontSize: 10, fontFamily: font(null, false, f), color: theme.light, marginBottom: 2 }}>
-                    {entry.company || entry.institution || entry.issuer}
-                    {entry.location ? ` — ${entry.location}` : ''}
+                    {resolve(entry.company || entry.institution || entry.issuer, data)}
+                    {entry.location ? ` — ${resolve(entry.location, data)}` : ''}
                 </Text>
             ) : null}
             {entry.description ? (
-                <Description text={entry.description} bullets={entry.bullets} theme={theme} f={f} />
+                <Description text={resolve(entry.description, data)} bullets={entry.bullets} theme={theme} f={f} />
             ) : null}
             {entry.gpa ? (
-                <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light }}>GPA: {entry.gpa}</Text>
+                <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light }}>GPA: {resolve(entry.gpa, data)}</Text>
             ) : null}
         </View>
     </View>
@@ -97,11 +101,11 @@ const MinimalTimelineLayout = ({ data, theme, size, padding }) => {
                 {/* ═══ HEADER ═══ */}
                 <View style={{ marginBottom: 12 }}>
                     <Text style={{ fontSize: f?.nameSize || 22, fontFamily: font(null, true, f), color: theme.accent, textAlign: 'center' }}>
-                        {data.name}
+                        {resolve(data.name, data)}
                     </Text>
                     {data.title ? (
                         <Text style={{ fontSize: 11, fontFamily: font(null, false, f), color: theme.light, textAlign: 'center', marginTop: 2 }}>
-                            {data.title}
+                            {resolve(data.title, data)}
                         </Text>
                     ) : null}
                     {/* Contact row with labels */}
@@ -126,7 +130,7 @@ const MinimalTimelineLayout = ({ data, theme, size, padding }) => {
                     <View style={{ marginBottom: f?.sectionMarginAfter || 6 }}>
                         <SectionTitle title="Summary" theme={theme} f={f} />
                         <Text style={{ fontSize: f?.descSize || f?.size || 10, fontFamily: font(null, false, f), color: theme.text, lineHeight: 1.4 }}>
-                            <RichSegments text={data.summary} theme={theme} f={f} />
+                            <RichSegments text={resolve(data.summary, data)} theme={theme} f={f} />
                         </Text>
                     </View>
                 ) : null}
@@ -175,14 +179,14 @@ const MinimalTimelineLayout = ({ data, theme, size, padding }) => {
                             <View key={i} style={{ marginBottom: 6, paddingLeft: 18 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                     <Text style={{ flex: 1, fontSize: f?.size || 11, fontFamily: font(null, true, f), color: theme.text }}>
-                                        {proj.title}
+                                        {resolve(proj.title, data)}
                                     </Text>
                                     <View style={{ flexDirection: 'row', gap: 8 }}>
-                                        {proj.github ? <Href href={proj.github} theme={theme} f={f}>GitHub</Href> : null}
-                                        {proj.live ? <Href href={proj.live} theme={theme} f={f}>Live</Href> : null}
+                                        {proj.live ? <Href href={proj.live} theme={theme} f={f}>Live Demo</Href> : null}
+                                        {proj.github ? <Href href={proj.github} theme={theme} f={f}>Repository</Href> : null}
                                     </View>
                                 </View>
-                                <Description text={proj.description} bullets={proj.bullets} theme={theme} f={f} />
+                                <Description text={resolve(proj.description, data)} bullets={proj.bullets} theme={theme} f={f} />
                             </View>
                         ))}
                     </View>
@@ -198,7 +202,7 @@ const MinimalTimelineLayout = ({ data, theme, size, padding }) => {
                                     <Text style={{ fontSize: f?.size || 10, fontFamily: font(null, true, f), color: theme.accent }}>{group.title}: </Text>
                                 ) : null}
                                 <Text style={{ fontSize: f?.descSize || f?.size || 9, fontFamily: font(null, false, f), color: theme.text }}>
-                                    <RichSegments text={group.skills} theme={theme} f={f} />
+                                    <RichSegments text={resolve(group.skills, data)} theme={theme} f={f} />
                                 </Text>
                             </View>
                         ))}
@@ -213,13 +217,19 @@ const MinimalTimelineLayout = ({ data, theme, size, padding }) => {
                             <View key={i} style={{ marginBottom: 4, paddingLeft: 18 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                     <Text style={{ flex: 1, fontSize: f?.size || 10, fontFamily: font(null, true, f), color: theme.text }}>
-                                        {cert.title}
+                                        {cert.url ? (
+                                            <Link src={normUrl(cert.url)} style={{ color: theme.text, textDecoration: 'none' }}>
+                                                {resolve(cert.title, data)}
+                                            </Link>
+                                        ) : (
+                                            resolve(cert.title, data)
+                                        )}
                                     </Text>
                                     <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light, fontStyle: 'italic' }}>
                                         {dateRange(cert.date, null)}
                                     </Text>
                                 </View>
-                                <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light }}>{cert.issuer}</Text>
+                                <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light }}>{resolve(cert.issuer, data)}</Text>
                             </View>
                         ))}
                     </View>

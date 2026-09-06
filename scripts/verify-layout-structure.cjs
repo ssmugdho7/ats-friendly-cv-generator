@@ -6,7 +6,10 @@
  * 2. Key structural elements (sidebar widths, photo placement, timeline, stat boxes)
  * 3. ATS safety patterns (no tables, flexbox only, real text, icon+label pairing)
  * 4. Theme variable usage (no hardcoded colors that should use theme)
- * 5. LayoutRouter correctly routes all five layouts
+ * 5. Placeholder system integration (resolvePlaceholders usage)
+ * 6. URL/hyperlink handling (cert URLs, project live/repo links, hidden when empty)
+ * 7. LayoutRouter correctly routes all five layouts
+ * 8. Seed data present in default Redux state
  *
  * Run with: node scripts/verify-layout-structure.cjs
  */
@@ -27,6 +30,9 @@ const LAYOUT_ROUTER = path.join(__dirname, '..', 'components', 'Resume', 'pdf', 
 const NORMALIZE = path.join(__dirname, '..', 'components', 'Resume', 'pdf', 'layouts', 'normalize.js');
 const PRIMITIVES = path.join(__dirname, '..', 'components', 'Resume', 'pdf', 'layouts', 'primitives.js');
 const CONFIG_LAYOUTS = path.join(__dirname, '..', 'config', 'layouts.js');
+const RESUME_SLICE = path.join(__dirname, '..', 'store', 'slices', 'resumeSlice.js');
+const DOCX_GENERATOR = path.join(__dirname, '..', 'utils', 'generateDocx.js');
+const PLACEHOLDERS_UTIL = path.join(__dirname, '..', 'utils', 'placeholders.js');
 
 function readFile(filePath) {
     try {
@@ -34,15 +40,6 @@ function readFile(filePath) {
     } catch {
         return null;
     }
-}
-
-function checkContains(content, patterns, label) {
-    const results = {};
-    for (const pattern of patterns) {
-        const regex = pattern instanceof RegExp ? pattern : new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-        results[pattern] = content.includes(pattern) || regex.test(content);
-    }
-    return results;
 }
 
 function verifyLayoutStructure(layoutKey, fileName) {
@@ -89,7 +86,14 @@ function verifyLayoutStructure(layoutKey, fileName) {
         result.passed = false;
     }
 
-    // Check 5: Has proper Document/Page structure
+    // Check 5: Placeholder system integration
+    result.checks.usesPlaceholders = content.includes('resolvePlaceholders') || content.includes('resolvePlaceholders');
+    if (!result.checks.usesPlaceholders) {
+        result.issues.push('Missing placeholder resolution');
+        result.passed = false;
+    }
+
+    // Check 6: Has proper Document/Page structure
     result.checks.hasDocumentPage = content.includes('<Document') && content.includes('<Page');
     if (!result.checks.hasDocumentPage) {
         result.issues.push('Missing Document/Page structure');
@@ -106,10 +110,14 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.photoCircle = content.includes('InitialsCircle');
             result.checks.skillPills = content.includes('SkillPill') || content.includes('paddingHorizontal');
             result.checks.atsDomOrder = content.includes('FIRST in DOM') || content.includes('first in DOM');
+            result.checks.certUrl = content.includes('cert.url') || content.includes('certification_');
+            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.sidebarWidth32) { result.issues.push('Missing 32% sidebar width'); result.passed = false; }
             if (!result.checks.sidebarBg) { result.issues.push('Missing sidebarBg theme variable'); result.passed = false; }
             if (!result.checks.photoCircle) { result.issues.push('Missing InitialsCircle photo placeholder'); result.passed = false; }
             if (!result.checks.atsDomOrder) { result.issues.push('Missing ATS DOM order comment'); result.passed = false; }
+            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
+            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
 
         case 'photo-header':
@@ -117,8 +125,12 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.photoInHeader = content.includes('InitialsCircle');
             result.checks.twoColumnBody = content.includes('flexDirection: \'row\'') || content.includes('flexDirection: "row"');
             result.checks.contactLabels = content.includes('row.label') || content.includes('row.label');
+            result.checks.certUrl = content.includes('cert.url');
+            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.headerBand) { result.issues.push('Missing header band with bandBg'); result.passed = false; }
             if (!result.checks.twoColumnBody) { result.issues.push('Missing two-column body'); result.passed = false; }
+            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
+            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
 
         case 'minimal-timeline':
@@ -126,8 +138,12 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.timelineLine = content.includes('timelineLine');
             result.checks.timelineEntry = content.includes('TimelineEntry') || content.includes('TIMELINE_DOT_SIZE');
             result.checks.singleColumn = !content.includes('sidebar') && !content.includes('SIDEBAR');
+            result.checks.certUrl = content.includes('cert.url');
+            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.timelineDot) { result.issues.push('Missing timelineDot theme variable'); result.passed = false; }
             if (!result.checks.timelineEntry) { result.issues.push('Missing TimelineEntry component'); result.passed = false; }
+            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
+            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
 
         case 'stat-highlight':
@@ -135,8 +151,12 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.iconBadge = content.includes('iconChar');
             result.checks.ruleLine = content.includes('borderTopWidth') || content.includes('borderBottomWidth');
             result.checks.rightColumn = content.includes('borderLeftWidth');
+            result.checks.certUrl = content.includes('cert.url');
+            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.statBoxes) { result.issues.push('Missing StatBox component'); result.passed = false; }
             if (!result.checks.iconBadge) { result.issues.push('Missing icon badge headers'); result.passed = false; }
+            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
+            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
 
         case 'compact-sidebar':
@@ -144,8 +164,12 @@ function verifyLayoutStructure(layoutKey, fileName) {
             result.checks.tintBg = content.includes('tintBg');
             result.checks.compactSpacing = content.includes('marginBottom: 4') || content.includes('marginBottom: 6');
             result.checks.skillPills = content.includes('SkillPill');
+            result.checks.certUrl = content.includes('cert.url');
+            result.checks.projectLinks = content.includes('proj.live') && content.includes('proj.github');
             if (!result.checks.sidebarWidth28) { result.issues.push('Missing 28% sidebar width'); result.passed = false; }
             if (!result.checks.tintBg) { result.issues.push('Missing tintBg theme variable'); result.passed = false; }
+            if (!result.checks.certUrl) { result.issues.push('Missing certification URL support'); result.passed = false; }
+            if (!result.checks.projectLinks) { result.issues.push('Missing project live/repo link handling'); result.passed = false; }
             break;
     }
 
@@ -201,8 +225,12 @@ function verifyNormalize() {
 
     result.checks.contactRows = content.includes('contactRows');
     result.checks.getLayoutTheme = content.includes('getLayoutTheme');
+    result.checks.resolvePlaceholders = content.includes('resolvePlaceholders');
+    result.checks.buildTokenMap = content.includes('buildTokenMap');
     if (!result.checks.contactRows) { result.issues.push('Missing contactRows helper'); result.passed = false; }
     if (!result.checks.getLayoutTheme) { result.issues.push('Missing getLayoutTheme function'); result.passed = false; }
+    if (!result.checks.resolvePlaceholders) { result.issues.push('Missing resolvePlaceholders export'); result.passed = false; }
+    if (!result.checks.buildTokenMap) { result.issues.push('Missing buildTokenMap export'); result.passed = false; }
 
     return result;
 }
@@ -259,6 +287,88 @@ function verifyConfigLayouts() {
     return result;
 }
 
+function verifyPlaceholdersUtil() {
+    const content = readFile(PLACEHOLDERS_UTIL);
+    const result = { file: 'utils/placeholders.js', passed: true, checks: {}, issues: [] };
+
+    if (!content) {
+        result.passed = false;
+        result.issues.push('utils/placeholders.js not found');
+        return result;
+    }
+
+    result.checks.resolvePlaceholders = content.includes('export function resolvePlaceholders');
+    result.checks.buildTokenMap = content.includes('export function buildTokenMap');
+    result.checks.tokenRe = content.includes('TOKEN_RE') || content.includes('\\{\\{');
+    result.checks.unknownTokenEmpty = content.includes("return ''") || content.includes('return ""');
+    if (!result.checks.resolvePlaceholders) { result.issues.push('Missing resolvePlaceholders function'); result.passed = false; }
+    if (!result.checks.buildTokenMap) { result.issues.push('Missing buildTokenMap function'); result.passed = false; }
+    if (!result.checks.tokenRe) { result.issues.push('Missing token regex pattern'); result.passed = false; }
+    if (!result.checks.unknownTokenEmpty) { result.issues.push('Unknown tokens should resolve to empty string'); result.passed = false; }
+
+    return result;
+}
+
+function verifySeedData() {
+    const content = readFile(RESUME_SLICE);
+    const result = { file: 'store/slices/resumeSlice.js', passed: true, checks: {}, issues: [] };
+
+    if (!content) {
+        result.passed = false;
+        result.issues.push('resumeSlice.js not found');
+        return result;
+    }
+
+    result.checks.seedName = content.includes('Md. Shah Maruf Siraj Mugdho');
+    result.checks.seedEmail = content.includes('shahmarufsiraj360@gmail.com');
+    result.checks.seedGithub = content.includes('ssmugdho7');
+    result.checks.seedLinkedin = content.includes('shahmarufsiraj360');
+    result.checks.seedPortfolio = content.includes('shahmaruf-siraj-mugdho-profile.netlify.app');
+    result.checks.seedJobpilot = content.includes('jobpilot-hfpz.onrender.com');
+    result.checks.seedEbook = content.includes('ebook-web-rgnw.onrender.com');
+    result.checks.seedAgency = content.includes('agency-app-self-two.vercel.app');
+    result.checks.seedDLS = content.includes('etrade.dls.gov.bd');
+    result.checks.seedCertUrl = content.includes('14hJDm0m1b5m8ZfO4fJyNyampM6fIDUGx');
+    result.checks.seedProjects = content.includes('SEED_PROJECTS') || content.includes('JobPilot');
+    result.checks.seedExperience = content.includes('SEED_EXPERIENCE') || content.includes('DLS Venture');
+
+    for (const [key, check] of Object.entries(result.checks)) {
+        if (key === 'seedProjects' || key === 'seedExperience') continue;
+        if (!check) {
+            result.issues.push(`Missing seed data: ${key}`);
+            result.passed = false;
+        }
+    }
+
+    return result;
+}
+
+function verifyDocxGenerator() {
+    const content = readFile(DOCX_GENERATOR);
+    const result = { file: 'utils/generateDocx.js', passed: true, checks: {}, issues: [] };
+
+    if (!content) {
+        result.passed = false;
+        result.issues.push('generateDocx.js not found');
+        return result;
+    }
+
+    result.checks.usesPlaceholders = content.includes('resolvePlaceholders');
+    result.checks.usesTokenMap = content.includes('buildTokenMap');
+    result.checks.certUrl = content.includes('cert.url');
+    result.checks.projectLive = content.includes('proj.live');
+    result.checks.projectGithub = content.includes('proj.github');
+    result.checks.noPlainTextUrlOnly = !content.includes("hyperlink(proj.url, proj.url");
+    if (!result.checks.usesPlaceholders) { result.issues.push('DOCX missing placeholder resolution'); result.passed = false; }
+    if (!result.checks.usesTokenMap) { result.issues.push('DOCX missing token map'); result.passed = false; }
+    if (!result.checks.certUrl) { result.issues.push('DOCX missing certification URL support'); result.passed = false; }
+    if (!result.checks.projectLive) { result.issues.push('DOCX missing project live link'); result.passed = false; }
+    if (!result.checks.projectGithub) { result.issues.push('DOCX missing project repo link'); result.passed = false; }
+    if (!result.checks.noPlainTextUrlOnly) { result.issues.push('DOCX should not render plain text URLs only'); result.passed = false; }
+
+    return result;
+}
+
 function main() {
     console.log('Layout Structure Verification');
     console.log('='.repeat(60) + '\n');
@@ -297,6 +407,22 @@ function main() {
     console.log(`  config/layouts.js: ${configResult.passed ? 'PASS' : 'FAIL'}`);
     if (!configResult.passed) configResult.issues.forEach(i => console.log(`    - ${i}`));
 
+    console.log('\nPlaceholder System:');
+    const placeholdersResult = verifyPlaceholdersUtil();
+    results.push(placeholdersResult);
+    console.log(`  utils/placeholders.js: ${placeholdersResult.passed ? 'PASS' : 'FAIL'}`);
+    if (!placeholdersResult.passed) placeholdersResult.issues.forEach(i => console.log(`    - ${i}`));
+
+    const seedResult = verifySeedData();
+    results.push(seedResult);
+    console.log(`  Seed data (Md. Shah Maruf Siraj Mugdho): ${seedResult.passed ? 'PASS' : 'FAIL'}`);
+    if (!seedResult.passed) seedResult.issues.forEach(i => console.log(`    - ${i}`));
+
+    const docxResult = verifyDocxGenerator();
+    results.push(docxResult);
+    console.log(`  DOCX generator: ${docxResult.passed ? 'PASS' : 'FAIL'}`);
+    if (!docxResult.passed) docxResult.issues.forEach(i => console.log(`    - ${i}`));
+
     console.log('\n' + '='.repeat(60));
     const passed = results.filter(r => r.passed).length;
     const failed = results.filter(r => !r.passed).length;
@@ -311,9 +437,9 @@ function main() {
         process.exit(1);
     }
 
-    console.log('\nAll structure checks passed!');
+    console.log('\nAll checks passed!');
     console.log('\nNext.js build: PASSED (verified via `npm run build`)');
-    console.log('PDF text extraction: Verify in browser at http://localhost:3000/editor');
+    console.log('To verify live preview: start dev server and visit /editor');
     process.exit(0);
 }
 

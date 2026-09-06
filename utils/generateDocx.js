@@ -12,6 +12,7 @@ import {
 import { parseRich, normUrl } from './richText';
 import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
 import { TEMPLATES } from '@/config/templates';
+import { resolvePlaceholders, buildTokenMap } from '@/utils/placeholders';
 import formatDate from './formatDate';
 
 const A4_WIDTH = 11906;
@@ -51,7 +52,7 @@ const toDocxColor = css => {
 };
 
 const runs = (text, base = {}) =>
-    parseRich(text).map(
+    parseRich(resolvePlaceholders(text, base._data || {})).map(
         seg =>
             new TextRun({
                 text: seg.t,
@@ -110,11 +111,12 @@ const dateRun = (text, font) =>
         font: DOCX_FONT_MAP[font?.family] || 'Times New Roman',
     });
 
-const descriptionParas = (text, bullets, font, tmpl) => {
+const descriptionParas = (text, bullets, font, tmpl, data) => {
     const descSize = font?.descSize ? font.descSize * 2 : (font?.size ? font.size * 2 : 20);
     const docxFont = DOCX_FONT_MAP[font?.family] || 'Times New Roman';
     const textColor = toDocxColor(tmpl?.text) || '555555';
-    const lines = String(text || '')
+    const resolved = resolvePlaceholders(text, data);
+    const lines = String(resolved || '')
         .split('\n')
         .map(l => l.trim())
         .filter(Boolean);
@@ -124,7 +126,7 @@ const descriptionParas = (text, bullets, font, tmpl) => {
             line =>
                 new Paragraph({
                     spacing: { before: 40, after: 0 },
-                    children: runs(line, { size: descSize, color: textColor, font: docxFont }),
+                    children: runs(line, { size: descSize, color: textColor, font: docxFont, _data: data }),
                 }),
         );
     }
@@ -133,12 +135,12 @@ const descriptionParas = (text, bullets, font, tmpl) => {
             new Paragraph({
                 bullet: { level: 0 },
                 spacing: { before: 20, after: 20 },
-                children: runs(line, { size: descSize, color: textColor, font: docxFont }),
+                children: runs(line, { size: descSize, color: textColor, font: docxFont, _data: data }),
             }),
     );
 };
 
-const buildHeader = (contact = {}, tagline = '', font, tmpl) => {
+const buildHeader = (contact = {}, tagline = '', font, tmpl, data) => {
     const docxFont = DOCX_FONT_MAP[font?.family] || 'Times New Roman';
     const nameSize = font?.nameSize ? font.nameSize * 2 : 40;
     const nameColor = toDocxColor(tmpl?.text) || '111111';
@@ -149,7 +151,7 @@ const buildHeader = (contact = {}, tagline = '', font, tmpl) => {
             spacing: { after: 40 },
             children: [
                 new TextRun({
-                    text: contact.name || 'Resume',
+                    text: resolvePlaceholders(contact.name, data) || 'Resume',
                     bold: true,
                     size: nameSize,
                     color: nameColor,
@@ -166,7 +168,7 @@ const buildHeader = (contact = {}, tagline = '', font, tmpl) => {
                 spacing: { after: 60 },
                 children: [
                     new TextRun({
-                        text: String(tagline).trim(),
+                        text: resolvePlaceholders(String(tagline).trim(), data),
                         italics: true,
                         size: 24,
                         color: '444444',
@@ -214,7 +216,7 @@ const buildSections = (data, contentWidth) => {
             out.push(
                 new Paragraph({
                     spacing: { after: 80 },
-                    children: runs(data.summary.summary, { size: descSize, color: textColor, font: docxFont }),
+                    children: runs(data.summary.summary, { size: descSize, color: textColor, font: docxFont, _data: data }),
                 }),
             );
         } else if (key === 'education') {
@@ -223,12 +225,12 @@ const buildSections = (data, contentWidth) => {
             data.education.forEach(edu => {
                 out.push(
                     titleRow(
-                        [new TextRun({ text: edu.degree || '', bold: true, size: descSize + 4, color: textColor, font: docxFont })],
+                        [new TextRun({ text: resolvePlaceholders(edu.degree || '', data), bold: true, size: descSize + 4, color: textColor, font: docxFont })],
                         [dateRun(`${formatDate(edu.start)}- ${formatDate(edu.end)}`, font)],
                         contentWidth,
                     ),
                 );
-                const sub = [edu.institution || '', edu.gpa ? ` (${edu.gpa})` : '', edu.location ? `   ${edu.location}` : '']
+                const sub = [resolvePlaceholders(edu.institution || '', data), edu.gpa ? ` (${resolvePlaceholders(edu.gpa, data)})` : '', edu.location ? `   ${resolvePlaceholders(edu.location, data)}` : '']
                     .join('')
                     .trim();
                 if (sub) {
@@ -246,12 +248,12 @@ const buildSections = (data, contentWidth) => {
             data.experience.forEach(exp => {
                 out.push(
                     titleRow(
-                        [new TextRun({ text: exp.role || '', bold: true, size: descSize + 4, color: textColor, font: docxFont })],
+                        [new TextRun({ text: resolvePlaceholders(exp.role || '', data), bold: true, size: descSize + 4, color: textColor, font: docxFont })],
                         [dateRun(`${formatDate(exp.start)} - ${formatDate(exp.end)}`, font)],
                         contentWidth,
                     ),
                 );
-                const sub = [exp.company || '', exp.location ? `   ${exp.location}` : ''].join('').trim();
+                const sub = [resolvePlaceholders(exp.company || '', data), exp.location ? `   ${resolvePlaceholders(exp.location, data)}` : ''].join('').trim();
                 if (sub) {
                     out.push(
                         new Paragraph({
@@ -260,23 +262,23 @@ const buildSections = (data, contentWidth) => {
                         }),
                     );
                 }
-                out.push(...descriptionParas(exp.description, exp.bullets, font, tmpl));
+                out.push(...descriptionParas(exp.description, exp.bullets, font, tmpl, data));
             });
         } else if (key === 'projects') {
             if (!data.projects?.length) continue;
             out.push(heading('Projects', font, tmpl));
             data.projects.forEach(proj => {
                 const right = [];
-                if (proj.github) {
-                    right.push(hyperlink('GitHub', proj.github, descSize + 2, font, tmpl));
-                }
                 if (proj.live) {
+                    right.push(hyperlink('Live Demo', proj.live, descSize + 2, font, tmpl));
+                }
+                if (proj.github) {
                     if (right.length) right.push(new TextRun({ text: '   ', size: descSize + 2, font: docxFont }));
-                    right.push(hyperlink('Live', proj.live, descSize + 2, font, tmpl));
+                    right.push(hyperlink('Repository', proj.github, descSize + 2, font, tmpl));
                 }
                 out.push(
                     titleRow(
-                        [new TextRun({ text: proj.title || '', bold: true, size: descSize + 4, color: textColor, font: docxFont })],
+                        [new TextRun({ text: resolvePlaceholders(proj.title || '', data), bold: true, size: descSize + 4, color: textColor, font: docxFont })],
                         right,
                         contentWidth,
                     ),
@@ -285,11 +287,11 @@ const buildSections = (data, contentWidth) => {
                     out.push(
                         new Paragraph({
                             spacing: { after: 40 },
-                            children: [hyperlink(proj.url, proj.url, descSize, font, tmpl)],
+                            children: [hyperlink(resolvePlaceholders(proj.url, data), resolvePlaceholders(proj.url, data), descSize, font, tmpl)],
                         }),
                     );
                 }
-                out.push(...descriptionParas(proj.description, proj.bullets, font, tmpl));
+                out.push(...descriptionParas(proj.description, proj.bullets, font, tmpl, data));
             });
         } else if (key === 'skills') {
             const groups = Array.isArray(data.skills)
@@ -303,25 +305,30 @@ const buildSections = (data, contentWidth) => {
             visible.forEach(group => {
                 const kids = [];
                 if (group.title) kids.push(new TextRun({ text: `${group.title}: `, bold: true, size: descSize + 2, font: docxFont }));
-                kids.push(...runs(group.skills, { size: descSize + 2, font: docxFont }));
+                kids.push(...runs(group.skills, { size: descSize + 2, font: docxFont, _data: data }));
                 out.push(new Paragraph({ spacing: { before: 40, after: 40 }, children: kids }));
             });
         } else if (key === 'certificates') {
             if (!data.certificates?.length) continue;
             out.push(heading('Certifications', font, tmpl));
             data.certificates.forEach(cert => {
+                const certTitle = resolvePlaceholders(cert.title || '', data);
+                const certIssuer = resolvePlaceholders(cert.issuer || '', data);
+                const titleChildren = cert.url
+                    ? [hyperlink(certTitle, cert.url, descSize + 4, font, tmpl)]
+                    : [new TextRun({ text: certTitle, bold: true, size: descSize + 4, color: textColor, font: docxFont })];
                 out.push(
                     titleRow(
-                        [new TextRun({ text: cert.title || '', bold: true, size: descSize + 4, color: textColor, font: docxFont })],
+                        titleChildren,
                         [dateRun(formatDate(cert.date), font)],
                         contentWidth,
                     ),
                 );
-                if (cert.issuer) {
+                if (certIssuer) {
                     out.push(
                         new Paragraph({
                             spacing: { after: 80 },
-                            children: [new TextRun({ text: cert.issuer, size: descSize, color: textColor, font: docxFont })],
+                            children: [new TextRun({ text: certIssuer, size: descSize, color: textColor, font: docxFont })],
                         }),
                     );
                 }
@@ -339,10 +346,14 @@ const buildSections = (data, contentWidth) => {
             if (!data.references?.length) continue;
             out.push(heading('References', font, tmpl));
             data.references.forEach(ref => {
+                const right = [];
+                if (ref.website) {
+                    right.push(hyperlink('Website', ref.website, descSize, font, tmpl));
+                }
                 out.push(
                     titleRow(
                         [new TextRun({ text: ref.name || '', bold: true, size: descSize + 4, color: textColor, font: docxFont })],
-                        ref.website ? [hyperlink('Website', ref.website, descSize, font, tmpl)] : [],
+                        right,
                         contentWidth,
                     ),
                 );
@@ -374,7 +385,7 @@ const buildSections = (data, contentWidth) => {
             out.push(
                 new Paragraph({
                     spacing: { after: 40 },
-                    children: runs(items, { size: descSize, color: textColor, font: docxFont }),
+                    children: runs(items, { size: descSize, color: textColor, font: docxFont, _data: data }),
                 }),
             );
         }
@@ -390,7 +401,11 @@ export async function buildResumeDocx(resume, options = {}) {
     const { width: pageWidth, height: pageHeight } = getPaperDimensions(paperSize);
     const marginTwips = ptToTwips(margin);
     const contentWidth = pageWidth - marginTwips * 2;
-    const children = [...buildHeader(data.contact, data.tagline?.tagline, font, tmpl), ...buildSections(data, contentWidth)];
+    const tokenMap = buildTokenMap(data);
+    const children = [
+        ...buildHeader(data.contact, data.tagline?.tagline, font, tmpl, tokenMap),
+        ...buildSections({ ...data, _tokenMap: tokenMap }, contentWidth),
+    ];
     const doc = new Document({
         sections: [
             {

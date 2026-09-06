@@ -16,9 +16,10 @@
  *   - All text is real and selectable (ATS-safe)
  *   - No layout tables — flexbox only
  *   - Every icon has a paired text label
+ *   - Placeholders like {{full_name}} are resolved against the data model
  */
 import { Text, View, Document, Page, Link, StyleSheet } from '@react-pdf/renderer';
-import { getLayoutTheme, contactRows } from './normalize';
+import { getLayoutTheme, contactRows, resolvePlaceholders } from './normalize';
 import {
     font,
     RichSegments,
@@ -30,6 +31,9 @@ import {
     InitialsCircle,
     ContactItem,
 } from './primitives';
+import { normUrl } from '@/utils/richText';
+
+const resolve = (text, data) => resolvePlaceholders(text, data);
 
 const MainSection = ({ title, theme, f, children }) => (
     <View style={{ marginBottom: f?.sectionMarginAfter || 4 }}>
@@ -56,11 +60,11 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                     <View style={{ width: MAIN_W, padding: p, paddingTop: p }}>
                         {/* Name + tagline */}
                         <Text style={{ fontSize: f?.nameSize || 22, fontFamily: font(null, true, f), color: theme.accent }}>
-                            {data.name}
+                            {resolve(data.name, data)}
                         </Text>
                         {data.title ? (
                             <Text style={{ fontSize: 11, fontFamily: font(null, false, f), color: theme.light, marginTop: 2, marginBottom: 8 }}>
-                                {data.title}
+                                {resolve(data.title, data)}
                             </Text>
                         ) : null}
 
@@ -68,7 +72,7 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                         {data.summary ? (
                             <MainSection title="Summary" theme={theme} f={f}>
                                 <Text style={{ fontSize: f?.descSize || f?.size || 10, fontFamily: font(null, false, f), color: theme.text, lineHeight: 1.4 }}>
-                                    <RichSegments text={data.summary} theme={theme} f={f} />
+                                    <RichSegments text={resolve(data.summary, data)} theme={theme} f={f} />
                                 </Text>
                             </MainSection>
                         ) : null}
@@ -80,16 +84,16 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                                     <View key={i} style={{ marginBottom: 6 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                             <Text style={{ flex: 1, fontSize: f?.size || 11, fontFamily: font(null, true, f), color: theme.text }}>
-                                                {exp.role}
+                                                {resolve(exp.role, data)}
                                             </Text>
                                             <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light, fontStyle: 'italic' }}>
                                                 {dateRange(exp.start, exp.end)}
                                             </Text>
                                         </View>
                                         <Text style={{ fontSize: 10, fontFamily: font(null, false, f), color: theme.light, marginBottom: 2 }}>
-                                            {exp.company}{exp.location ? ` — ${exp.location}` : ''}
+                                            {resolve(exp.company, data)}{exp.location ? ` — ${resolve(exp.location, data)}` : ''}
                                         </Text>
-                                        <Description text={exp.description} bullets={exp.bullets} theme={theme} f={f} />
+                                        <Description text={resolve(exp.description, data)} bullets={exp.bullets} theme={theme} f={f} />
                                     </View>
                                 ))}
                             </MainSection>
@@ -102,14 +106,14 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                                     <View key={i} style={{ marginBottom: 6 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                             <Text style={{ flex: 1, fontSize: f?.size || 11, fontFamily: font(null, true, f), color: theme.text }}>
-                                                {edu.degree}
+                                                {resolve(edu.degree, data)}
                                             </Text>
                                             <Text style={{ fontSize: 9, fontFamily: font(null, false, f), color: theme.light, fontStyle: 'italic' }}>
                                                 {dateRange(edu.start, edu.end)}
                                             </Text>
                                         </View>
                                         <Text style={{ fontSize: 10, fontFamily: font(null, false, f), color: theme.light }}>
-                                            {edu.institution}{edu.gpa ? ` (${edu.gpa})` : ''}{edu.location ? ` — ${edu.location}` : ''}
+                                            {resolve(edu.institution, data)}{edu.gpa ? ` (${resolve(edu.gpa, data)})` : ''}{edu.location ? ` — ${resolve(edu.location, data)}` : ''}
                                         </Text>
                                     </View>
                                 ))}
@@ -123,14 +127,14 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                                     <View key={i} style={{ marginBottom: 6 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                             <Text style={{ flex: 1, fontSize: f?.size || 11, fontFamily: font(null, true, f), color: theme.text }}>
-                                                {proj.title}
+                                                {resolve(proj.title, data)}
                                             </Text>
                                             <View style={{ flexDirection: 'row', gap: 8 }}>
-                                                {proj.github ? <Href href={proj.github} theme={theme} f={f}>GitHub</Href> : null}
-                                                {proj.live ? <Href href={proj.live} theme={theme} f={f}>Live</Href> : null}
+                                                {proj.live ? <Href href={proj.live} theme={theme} f={f}>Live Demo</Href> : null}
+                                                {proj.github ? <Href href={proj.github} theme={theme} f={f}>Repository</Href> : null}
                                             </View>
                                         </View>
-                                        <Description text={proj.description} bullets={proj.bullets} theme={theme} f={f} />
+                                        <Description text={resolve(proj.description, data)} bullets={proj.bullets} theme={theme} f={f} />
                                     </View>
                                 ))}
                             </MainSection>
@@ -196,9 +200,15 @@ const SidebarExecutiveLayout = ({ data, theme, size, padding }) => {
                                 <SidebarSectionTitle title="Certifications" theme={theme} f={f} />
                                 {data.certifications.map((cert, i) => (
                                     <View key={i} style={{ marginBottom: 4 }}>
-                                        <Text style={{ fontSize: 9, fontFamily: font(null, true, f), color: theme.sidebarText }}>{cert.title}</Text>
+                                        {cert.url ? (
+                                            <Link src={normUrl(cert.url)} style={{ fontSize: 9, fontFamily: font(null, true, f), color: theme.sidebarText, textDecoration: 'none' }}>
+                                                {resolve(cert.title, data)}
+                                            </Link>
+                                        ) : (
+                                            <Text style={{ fontSize: 9, fontFamily: font(null, true, f), color: theme.sidebarText }}>{resolve(cert.title, data)}</Text>
+                                        )}
                                         <Text style={{ fontSize: 8, fontFamily: font(null, false, f), color: theme.sidebarMuted }}>
-                                            {cert.issuer}{cert.date ? ` — ${dateRange(cert.date, null)}` : ''}
+                                            {resolve(cert.issuer, data)}{cert.date ? ` — ${dateRange(cert.date, null)}` : ''}
                                         </Text>
                                     </View>
                                 ))}

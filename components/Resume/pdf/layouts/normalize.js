@@ -1,5 +1,6 @@
 import { TEMPLATES, DEFAULT_TEMPLATE } from '@/config/templates';
 import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
+import { buildTokenMap, resolvePlaceholders } from '@/utils/placeholders';
 
 export const getTemplate = key => TEMPLATES[key] || TEMPLATES[DEFAULT_TEMPLATE];
 
@@ -85,6 +86,13 @@ export const normalizeResume = (data = {}) => {
                 ? data.sectionOrder
                 : [...DEFAULT_SECTION_ORDER],
         font: data.font || {},
+        _tokenMap: buildTokenMap({
+            ...data,
+            contact,
+            name: contact.name,
+            title: data.tagline?.tagline || '',
+            summary: data.summary || {},
+        }),
     };
 };
 
@@ -110,3 +118,5 @@ export const initialsOf = name =>
         .join('')
         .slice(0, 2)
         .toUpperCase() || '•';
+
+export { resolvePlaceholders } from '@/utils/placeholders';
