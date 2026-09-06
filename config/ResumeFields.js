@@ -226,7 +226,7 @@ export default {
         fields: [],
     },
 
-    font: {
+    typography: {
         name: 'Typography',
         fields: [
             {
