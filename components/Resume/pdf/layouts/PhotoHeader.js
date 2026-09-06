@@ -122,7 +122,7 @@ const Header = ({ data, tmpl, font, layout }) => {
     const photoSrc = typeof data.photo === 'string' ? data.photo : (data.photo?.uri || '');
     
     return (
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12, paddingBottom: 10, borderBottom: `1px solid ${tmpl.border}` }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${tmpl.border}` }}>
             {hasPhoto ? (
                 <View style={{ width: 100, height: 100, borderRadius: 8, marginRight: 20, overflow: 'hidden' }}>
                     <Image src={photoSrc} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -403,7 +403,7 @@ const PhotoHeaderLayout = ({ data, size = 'A4', padding = 30, hiddenSections = [
             <Page size={size} style={{ backgroundColor: tmpl.bg, fontFamily: getFont(font?.family) }}>
                 <View style={{ padding }}>
                     <Header data={{ ...contact, name: contact?.name, title: tagline?.tagline, photo: data.photo }} tmpl={tmpl} font={font} layout={layoutConfig} />
-                    <View style={{ marginTop: font?.imageBottomGap || 8 }}>
+                    <View style={{ marginTop: font?.imageBottomGap || 4 }}>
                         {renderOrderedSections(sections, sectionOrder, tmpl, font, hiddenSections)}
                     </View>
                 </View>
