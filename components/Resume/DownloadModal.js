@@ -71,6 +71,8 @@ const DownloadModal = ({ open, onClose }) => {
                     data={resumeData}
                     size={paperSize === 'Letter' ? [612, 792] : 'A4'}
                     padding={margin}
+                    layout={resumeData.layout}
+                    hiddenSections={resumeData.hiddenSections || []}
                 />
             );
             pdf(doc)

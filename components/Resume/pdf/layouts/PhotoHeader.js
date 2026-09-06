@@ -127,7 +127,7 @@ const Header = ({ data, tmpl, font, layout }) => {
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${tmpl.border}` }}>
             {hasPhoto ? (
                 <View style={{ width: imageSize, height: imageSize, borderRadius: 8, marginRight: 20, overflow: 'hidden' }}>
-                    <Image src={photoSrc} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <Image src={photoSrc} style={{ width: imageSize, height: imageSize }} />
                 </View>
             ) : (
                 <View style={{ width: imageSize, height: imageSize, borderRadius: 8, backgroundColor: tmpl.accent, marginRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
