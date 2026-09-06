@@ -15,7 +15,7 @@ const getLayout = key => LAYOUTS[key] || LAYOUTS[DEFAULT_LAYOUT];
 const ContactLine = ({ contact, font, tmpl }) => {
     const order = contact.order || ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'];
     const linkColor = font?.linkColor || tmpl.accent;
-    const contactAlign = font?.contactAlign || 'center';
+    const headerAlign = font?.headerAlign || 'center';
 
     const items = order.map(key => {
         if (key === 'phone') {
@@ -56,7 +56,7 @@ const ContactLine = ({ contact, font, tmpl }) => {
 
     if (!items.length) return null;
 
-    const justifyContent = contactAlign === 'center' ? 'center' : contactAlign === 'right' ? 'flex-end' : 'flex-start';
+    const justifyContent = headerAlign === 'center' ? 'center' : headerAlign === 'right' ? 'flex-end' : 'flex-start';
 
     return (
         <View style={{ marginTop: 6, marginBottom: 4, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent, gap: 4 }}>
@@ -81,8 +81,7 @@ const ContactLine = ({ contact, font, tmpl }) => {
 const Header = ({ data, tmpl, font, layout }) => {
     const nameSize = font?.nameSize || 28;
     const taglineSize = font?.descSize || font?.size || 12;
-    const contactAlign = font?.contactAlign || 'center';
-    const taglineAlign = font?.taglineAlign || 'center';
+    const headerAlign = font?.headerAlign || 'center';
     
     const hasPhoto = data.photo && (typeof data.photo === 'string' || data.photo?.uri);
     const photoSrc = typeof data.photo === 'string' ? data.photo : (data.photo?.uri || '');
@@ -101,11 +100,11 @@ const Header = ({ data, tmpl, font, layout }) => {
                 </View>
             )}
             <View style={{ flex: 1 }}>
-                <Text style={{ color: tmpl.accent, fontSize: nameSize, fontFamily: getFont(font?.family, true), marginBottom: 4, textAlign: contactAlign }}>
+                <Text style={{ color: tmpl.accent, fontSize: nameSize, fontFamily: getFont(font?.family, true), marginBottom: 4, textAlign: headerAlign }}>
                     {data.name || ''}
                 </Text>
                 {!!data.title && (
-                    <Text style={{ color: tmpl.light, fontSize: taglineSize, marginBottom: 6, textAlign: taglineAlign }}>
+                    <Text style={{ color: tmpl.light, fontSize: taglineSize, marginBottom: 6, textAlign: headerAlign }}>
                         {data.title}
                     </Text>
                 )}
@@ -129,7 +128,7 @@ const Experience = ({ data, tmpl, font }) => {
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.text, fontSize: roleSize }}>{item.role}</Text>
                             <Text style={{ fontFamily: getFont(font?.family), fontSize: companySize, color: tmpl.light }}>
-                                {formatDate(item.start)} - {formatDate(item.end)}
+                                {formatDate(item.start)} - {item.present ? 'Present' : formatDate(item.end)}
                             </Text>
                         </View>
                         <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text, fontSize: companySize }}>
@@ -163,7 +162,7 @@ const Education = ({ data, tmpl, font }) => {
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.text, fontSize: roleSize }}>{item.degree}</Text>
                             <Text style={{ fontFamily: getFont(font?.family), fontSize: companySize, color: tmpl.light }}>
-                                {formatDate(item.start)} - {formatDate(item.end)}
+                                {formatDate(item.start)} - {item.present ? 'Present' : formatDate(item.end)}
                             </Text>
                         </View>
                         <Text style={{ fontFamily: getFont(font?.family), fontSize: companySize, color: tmpl.text }}>
@@ -189,15 +188,10 @@ const Projects = ({ data, tmpl, font }) => {
                     <View style={{ marginBottom: 10 }}>
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                             <Text style={{ fontFamily: getFont(font?.family, true), color: tmpl.text, fontSize: roleSize }}>{project.title}</Text>
-                            {project.live && (
-                                <Link src={normUrl(project.live)} style={{ color: linkColor, fontSize: companySize, textDecoration: font?.linkUnderline && normUrl(project.live).startsWith('http') ? 'underline' : 'none' }}>Live</Link>
+                            {project.github && (
+                                <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: companySize, textDecoration: font?.linkUnderline && normUrl(project.github).startsWith('http') ? 'underline' : 'none' }}>GitHub</Link>
                             )}
                         </View>
-                        {project.url && (
-                            <Text style={{ fontFamily: getFont(font?.family), fontSize: companySize, color: linkColor, marginTop: 2, textDecoration: font?.linkUnderline && normUrl(project.url).startsWith('http') ? 'underline' : 'none' }}>
-                                {project.url}
-                            </Text>
-                        )}
                         {project.description && (() => {
                             const lines = String(project.description).split('\n').map(l => l.trim()).filter(Boolean);
                             return lines.map((line, idx) => (

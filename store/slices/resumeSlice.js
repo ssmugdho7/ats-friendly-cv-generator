@@ -19,7 +19,7 @@ const defaultResume = {
     template: DEFAULT_TEMPLATE,
     layout: DEFAULT_LAYOUT,
     photo: null,
-    font: { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 },
+    font: { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 },
 
     saved: false,
 };
@@ -115,10 +115,10 @@ const resumeSlice = createSlice({
                 summary: 'Experienced developer specializing in building exceptional digital experiences. Proficient in React, Node.js, and modern web technologies.'
             };
             state.education = [
-                { degree: 'Bachelor of Science in Computer Science', institution: 'University of Technology', start: '2018-01', end: '2022-01', location: 'Dhaka, Bangladesh', gpa: '3.8/4.0' }
+                { degree: 'Bachelor of Science in Computer Science', institution: 'University of Technology', start: '2018-01', end: '2022-01', location: 'Dhaka, Bangladesh', gpa: '3.8/4.0', present: false }
             ];
             state.experience = [
-                { role: 'Senior Software Engineer', company: 'Tech Solutions Inc.', location: 'Dhaka, Bangladesh', start: '2022-01', end: 'Present', description: 'Leading development of web applications using React and Node.js', bullets: true },
+                { role: 'Senior Software Engineer', company: 'Tech Solutions Inc.', location: 'Dhaka, Bangladesh', start: '2022-01', end: '', present: true, description: 'Leading development of web applications using React and Node.js', bullets: true },
                 { role: 'Software Developer', company: 'Digital Innovations Ltd.', location: 'Dhaka, Bangladesh', start: '2020-01', end: '2022-01', description: 'Developed and maintained multiple client projects', bullets: true }
             ];
             state.projects = [
@@ -145,7 +145,7 @@ const resumeSlice = createSlice({
             state.hiddenSections = [];
             state.template = DEFAULT_TEMPLATE;
             state.layout = DEFAULT_LAYOUT;
-            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
             state.saved = false;
         },
 
@@ -164,7 +164,7 @@ const resumeSlice = createSlice({
             state.hiddenSections = [];
             state.template = DEFAULT_TEMPLATE;
             state.layout = DEFAULT_LAYOUT;
-            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', contactAlign: 'center', taglineAlign: 'center', imageBottomGap: 8 };
+            state.font = { family: 'Times-Roman', size: 10, titleSize: 13, titleWeight: 'bold', breakerSize: 1, descSize: 10, nameSize: 20, companySize: 10, roleSize: 12, sectionMarginBefore: 8, sectionMarginAfter: 6, linkColor: '#555555', linkUnderline: false, sectionLineColor: '#e0e0e0', headerAlign: 'center', imageBottomGap: 8 };
             state.photo = null;
             state.saved = false;
         },

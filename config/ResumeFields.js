@@ -52,6 +52,12 @@ export default {
             { name: 'institution', label: 'Institution', placeholder: 'University Name' },
             { name: 'start', label: 'Start Date', type: 'month', placeholder: 'MM/YYYY' },
             { name: 'end', label: 'End Date', type: 'month', placeholder: 'MM/YYYY' },
+            {
+                name: 'present',
+                label: 'Currently Studying Here',
+                type: 'checkbox',
+                span: true,
+            },
             { name: 'location', label: 'Location', placeholder: 'City, Country' },
             { name: 'gpa', label: 'GPA', placeholder: '3.8/4.0' },
         ],
@@ -66,6 +72,12 @@ export default {
             { name: 'location', label: 'Location', placeholder: 'City, Country' },
             { name: 'start', label: 'Start Date', type: 'month', placeholder: 'MM/DD/YYYY' },
             { name: 'end', label: 'End Date', type: 'month', placeholder: 'MM/DD/YYYY' },
+            {
+                name: 'present',
+                label: 'Currently Working Here',
+                type: 'checkbox',
+                span: true,
+            },
             {
                 name: 'description',
                 label: 'Responsibility (one point per line)',
@@ -250,17 +262,10 @@ export default {
             { name: 'linkColor', label: 'Link Color', type: 'color', placeholder: '#555555' },
             { name: 'linkUnderline', label: 'Underline Links', type: 'checkbox' },
             { name: 'sectionLineColor', label: 'Section Line Color', type: 'color', placeholder: '#e0e0e0' },
-            { name: 'contactAlign', label: 'Contact Align', type: 'select', options: [
+            { name: 'headerAlign', label: 'Header Align (Name / Tagline / Contact)', type: 'select', options: [
                 { value: 'left', name: 'Left' },
                 { value: 'center', name: 'Center' },
                 { value: 'right', name: 'Right' },
-                { value: 'justify', name: 'Justify' },
-            ]},
-            { name: 'taglineAlign', label: 'Tagline Align', type: 'select', options: [
-                { value: 'left', name: 'Left' },
-                { value: 'center', name: 'Center' },
-                { value: 'right', name: 'Right' },
-                { value: 'justify', name: 'Justify' },
             ]},
             { name: 'imageBottomGap', label: 'Image Bottom Gap (Modern Layout)', type: 'number', placeholder: '8' },
         ],

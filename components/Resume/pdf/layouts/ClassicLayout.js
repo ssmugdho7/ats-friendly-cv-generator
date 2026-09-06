@@ -84,16 +84,15 @@ const Header = ({ data, tagline, font, tmpl }) => {
     });
 
     const nameSize = font?.nameSize || 20;
-    const contactAlign = font?.contactAlign || 'center';
-    const taglineAlign = font?.taglineAlign || 'center';
+    const headerAlign = font?.headerAlign || 'center';
 
     return (
         <Section font={font} tmpl={tmpl}>
-            <Text style={{ color: tmpl.accent, fontSize: nameSize, fontFamily: getFont(font?.family, true), textAlign: contactAlign }}>
+            <Text style={{ color: tmpl.accent, fontSize: nameSize, fontFamily: getFont(font?.family, true), textAlign: headerAlign }}>
                 {data.name || ''}
             </Text>
             {!!tagline && (
-                <Text style={{ color: tmpl.light, fontSize: 12, textAlign: taglineAlign, marginTop: 2, fontFamily: getFont(font?.family) }}>{tagline}</Text>
+                <Text style={{ color: tmpl.light, fontSize: 12, textAlign: headerAlign, marginTop: 2, fontFamily: getFont(font?.family) }}>{tagline}</Text>
             )}
             <ContactLine contact={data} links={links.filter(l => l.value)} font={font} tmpl={tmpl} />
         </Section>
@@ -103,7 +102,7 @@ const Header = ({ data, tagline, font, tmpl }) => {
 const ContactLine = ({ contact, links, font, tmpl }) => {
     const order = contact.order || ['address', 'phone', 'email', 'linkedin', 'github', 'portfolio'];
     const linkColor = font?.linkColor || tmpl.accent;
-    const contactAlign = font?.contactAlign || 'center';
+    const headerAlign = font?.headerAlign || 'center';
 
     const items = order.map(key => {
         if (key === 'phone') {
@@ -143,8 +142,10 @@ const ContactLine = ({ contact, links, font, tmpl }) => {
 
     if (!items.length) return null;
 
+    const justifyContent = headerAlign === 'center' ? 'center' : headerAlign === 'right' ? 'flex-end' : 'flex-start';
+
     return (
-        <View style={{ color: tmpl.text, fontSize: 11, marginTop: 6, marginBottom: 8, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 4, textAlign: contactAlign, justifyContent: contactAlign === 'center' ? 'center' : contactAlign === 'right' ? 'flex-end' : 'flex-start' }}>
+        <View style={{ color: tmpl.text, fontSize: 11, marginTop: 6, marginBottom: 8, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: 4, textAlign: headerAlign, justifyContent }}>
             {items.map((item, i) => (
                 <React.Fragment key={item.key}>
                     {i > 0 && <Text style={{ color: tmpl.light, fontFamily: getFont(font?.family), fontSize: 10 }}> | </Text>}
@@ -181,24 +182,27 @@ const Summary = ({ data, font, tmpl }) => {
 
 const Education = ({ data, font, tmpl }) => (
     <Section title={'Education'} font={font} tmpl={tmpl}>
-        {data.map(({ degree, institution, start, end, location, gpa }, i) => (
-            <View key={i} style={{ marginBottom: 4 }}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
-                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{degree}</Text>
-                    <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>
-                        {formatDate(start)}- {formatDate(end)}
-                    </Text>
+        {data.map(({ degree, institution, start, end, present, location, gpa }, i) => {
+            const endLabel = present ? 'Present' : formatDate(end);
+            return (
+                <View key={i} style={{ marginBottom: 4 }}>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
+                        <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{degree}</Text>
+                        <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>
+                            {formatDate(start)}- {endLabel}
+                        </Text>
+                    </View>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.companySize || 11 }}>
+                        <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>
+                            {institution}
+                            {gpa && <Text> ({gpa})</Text>}
+                        </Text>
+                        <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
+                    </View>
+                    {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
                 </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.companySize || 11 }}>
-                    <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>
-                        {institution}
-                        {gpa && <Text> ({gpa})</Text>}
-                    </Text>
-                    <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
-                </View>
-                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
-            </View>
-        ))}
+            );
+        })}
     </Section>
 );
 
@@ -211,28 +215,12 @@ const Projects = ({ data, font, tmpl }) => {
                 <View key={i}>
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
                         <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{project.title}</Text>
-                        {(project.github || project.live) && (
-                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                                {project.github ? (
-                                    <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: font?.linkUnderline && normUrl(project.github).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }}>
-                                        GitHub
-                                    </Link>
-                                ) : null}
-                                {project.live ? (
-                                    <Link src={normUrl(project.live)} style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: font?.linkUnderline && normUrl(project.live).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }}>
-                                        Live
-                                    </Link>
-                                ) : null}
-                            </View>
+                        {project.github && (
+                            <Link src={normUrl(project.github)} style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: font?.linkUnderline && normUrl(project.github).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }}>
+                                GitHub
+                            </Link>
                         )}
                     </View>
-                    {!!project.url && (
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.companySize || 11 }}>
-                            <Link style={{ color: linkColor, fontSize: font?.companySize || 11, textDecoration: font?.linkUnderline && normUrl(project.url).startsWith('http') ? 'underline' : 'none', fontFamily: getFont(font?.family) }} src={normUrl(project.url)}>
-                                {project.url}
-                            </Link>
-                        </View>
-                    )}
                     <Description text={project.description} bullets={project.bullets} font={font} tmpl={tmpl} />
                     {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
                 </View>
@@ -243,22 +231,25 @@ const Projects = ({ data, font, tmpl }) => {
 
 const Experience = ({ data, font, tmpl }) => (
     <Section title={'Experience'} font={font} tmpl={tmpl}>
-        {data.map(({ role, start, end, company, location, description, bullets }, i) => (
-            <View key={i} style={{ marginBottom: 4 }}>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
-                    <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{role}</Text>
-                    <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>
-                        {formatDate(start)} - {formatDate(end)}
-                    </Text>
+        {data.map(({ role, start, end, present, company, location, description, bullets }, i) => {
+            const endLabel = present ? 'Present' : formatDate(end);
+            return (
+                <View key={i} style={{ marginBottom: 4 }}>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.roleSize || 12 }}>
+                        <Text style={{ fontFamily: getFont(font?.family, true), marginRight: 'auto', color: tmpl.text }}>{role}</Text>
+                        <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>
+                            {formatDate(start)} - {endLabel}
+                        </Text>
+                    </View>
+                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.companySize || 11 }}>
+                        <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>{company}</Text>
+                        <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
+                    </View>
+                    <Description text={description} bullets={bullets} font={font} tmpl={tmpl} />
+                    {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
                 </View>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', fontSize: font?.companySize || 11 }}>
-                    <Text style={{ fontFamily: getFont(font?.family), color: tmpl.text }}>{company}</Text>
-                    <Text style={{ fontFamily: getFont(font?.family), fontSize: font?.descSize || font?.size || 10, fontStyle: 'italic', color: tmpl.light }}>{location}</Text>
-                </View>
-                <Description text={description} bullets={bullets} font={font} tmpl={tmpl} />
-                {i !== data.length - 1 && <View style={{ borderBottom: `1px solid ${tmpl.border}`, margin: '5px 0px' }} />}
-            </View>
-        ))}
+            );
+        })}
     </Section>
 );
 
