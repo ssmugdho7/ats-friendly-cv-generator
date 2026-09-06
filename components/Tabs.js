@@ -17,7 +17,7 @@ import {
     FaPalette,
     FaTableColumns,
     FaFont as FaTypography,
-    FaSlidersH,
+    FaSliders,
     FaChevronDown,
 } from 'react-icons/fa6';
 
@@ -88,7 +88,7 @@ const Tabs = ({ activeTab }) => {
                     onClick={() => setShowTools(prev => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500 transition-colors hover:text-gray-300"
                 >
-                    <FaSlidersH className="h-3.5 w-3.5" />
+                    <FaSliders className="h-3.5 w-3.5" />
                     <span>Explore Tools</span>
                     <FaChevronDown className={`h-3 w-3 transition-transform ${showTools ? 'rotate-180' : ''}`} />
                 </button>
