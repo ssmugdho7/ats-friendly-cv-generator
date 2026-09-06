@@ -121,14 +121,16 @@ const Header = ({ data, tmpl, font, layout }) => {
     const hasPhoto = data.photo && (typeof data.photo === 'string' || data.photo?.uri);
     const photoSrc = typeof data.photo === 'string' ? data.photo : (data.photo?.uri || '');
     
+    const imageSize = font?.imageSize || 100;
+    
     return (
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, paddingBottom: 6, borderBottom: `1px solid ${tmpl.border}` }}>
             {hasPhoto ? (
-                <View style={{ width: 100, height: 100, borderRadius: 8, marginRight: 20, overflow: 'hidden' }}>
+                <View style={{ width: imageSize, height: imageSize, borderRadius: 8, marginRight: 20, overflow: 'hidden' }}>
                     <Image src={photoSrc} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </View>
             ) : (
-                <View style={{ width: 100, height: 100, borderRadius: 8, backgroundColor: tmpl.accent, marginRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: imageSize, height: imageSize, borderRadius: 8, backgroundColor: tmpl.accent, marginRight: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ color: tmpl.bg, fontSize: 28, fontFamily: getFont(font?.family, true), fontWeight: 'bold' }}>
                         {data.name?.split(' ').map(n => n[0]).join('')}
                     </Text>

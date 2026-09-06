@@ -26,7 +26,7 @@ const page = ({ searchParams: { tab = 'contact' } }) => {
             {/* Editor Panel - Left */}
             <div className="flex min-w-0 flex-1 flex-col lg:max-w-[55%]">
                 <div className="mb-4 flex items-center justify-between">
-                    <h1 className="text-xl font-bold text-gray-100">Resume Editor</h1>
+                    <h1 className="text-xl font-bold text-gray-100">CV Editor</h1>
                     <div className="flex items-center gap-2">
                         <button
                             type="button"

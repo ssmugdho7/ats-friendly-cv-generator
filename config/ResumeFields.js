@@ -267,6 +267,7 @@ export default {
                 { value: 'right', name: 'Right' },
             ]},
             { name: 'imageBottomGap', label: 'Image Bottom Gap (Modern Layout)', type: 'number', placeholder: '8', min: 0, max: 100 },
+            { name: 'imageSize', label: 'Image Size (Modern Layout)', type: 'number', placeholder: '100', min: 40, max: 160 },
         ],
     },
 };

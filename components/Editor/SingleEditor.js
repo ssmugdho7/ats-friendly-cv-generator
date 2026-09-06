@@ -16,7 +16,7 @@ const SingleEditor = ({ tab }) => {
     const handleChange = e => {
         const { name, value } = e.target;
 
-        const numFields = ['size', 'titleSize', 'descSize', 'nameSize', 'breakerSize', 'sectionMarginBefore', 'sectionMarginAfter', 'companySize', 'roleSize', 'imageBottomGap'];
+        const numFields = ['size', 'titleSize', 'descSize', 'nameSize', 'breakerSize', 'sectionMarginBefore', 'sectionMarginAfter', 'companySize', 'roleSize', 'imageBottomGap', 'imageSize'];
         const coerced = stateKey === 'font' && numFields.includes(name) ? Number(value) || value : value;
 
         dispatch(

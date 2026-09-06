@@ -99,7 +99,7 @@ const Preview = () => {
     return (
         <div ref={parentRef} className="relative flex w-full flex-col">
             {/* PDF Preview */}
-            <div className="relative overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/50 shadow-2xl shadow-black/20">
+            <div className="relative overflow-hidden rounded-xl border border-gray-700/50 bg-gray-900/50 p-4 pb-10 shadow-2xl shadow-black/20">
                 {/* Download button top right */}
                 {!loading && (
                     <button

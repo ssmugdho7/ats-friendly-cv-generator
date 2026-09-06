@@ -3,7 +3,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { updateResumeValue, updateContactOrder, updatePhoto } from '@/store/slices/resumeSlice';
 import ResumeFields from '@/config/ResumeFields';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 const CONTACT_FIELD_ORDER = ['name', 'email', 'phone', 'phoneCountryCode', 'address', 'linkedin', 'github', 'portfolio'];
 
@@ -30,6 +30,11 @@ const ContactOrderEditor = () => {
     const order = contact.order || CONTACT_ITEMS.map(item => item.key);
     const [dragOver, setDragOver] = useState(false);
     const inputRef = useRef(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const move = (index, direction) => {
         const newOrder = [...order];
@@ -111,7 +116,7 @@ const ContactOrderEditor = () => {
                     onChange={onInputChange}
                     className="hidden"
                 />
-                {photo ? (
+                {mounted && photo ? (
                     <div className="flex flex-col items-center gap-3">
                         <img src={photo} alt="Profile preview" className="h-24 w-24 rounded-lg object-cover" />
                         <button
