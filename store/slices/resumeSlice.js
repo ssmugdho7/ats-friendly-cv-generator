@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
 import { DEFAULT_TEMPLATE } from '@/config/templates';
+import { DEFAULT_LAYOUT, LAYOUT_KEYS } from '@/config/layouts';
 
 const defaultResume = {
     contact: {},
@@ -13,8 +14,10 @@ const defaultResume = {
     certificates: [],
     languages: [],
     references: [],
+    achievements: [],
     sectionOrder: [...DEFAULT_SECTION_ORDER],
     template: DEFAULT_TEMPLATE,
+    layout: DEFAULT_LAYOUT,
     font: { family: 'Times-Roman', size: 10, titleSize: 13, descSize: 10, nameSize: 20, sectionGap: 8, sectionMarginBefore: 6, sectionMarginAfter: 4, linkColor: '#555555', linkUnderline: false },
 
     saved: false,

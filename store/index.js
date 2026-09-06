@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import resumeSlice from './slices/resumeSlice';
 import ResumeFields, { DEFAULT_SECTION_ORDER } from '@/config/ResumeFields';
 import { DEFAULT_TEMPLATE, TEMPLATE_KEYS } from '@/config/templates';
+import { DEFAULT_LAYOUT, LAYOUT_KEYS } from '@/config/layouts';
 
 /**
  * Bring states saved by older app versions up to the current shape:
@@ -9,6 +10,8 @@ import { DEFAULT_TEMPLATE, TEMPLATE_KEYS } from '@/config/templates';
  * - ensure the tagline section exists
  * - convert skills from the legacy `{ skills: '...' }` shape to grouped entries
  * - default existing project/experience descriptions to bullet mode
+ * - ensure layout exists and is a valid key
+ * - ensure achievements array exists
  */
 const migrateState = state => {
     if (!state || !state.resume) return state;
@@ -36,9 +39,14 @@ const migrateState = state => {
     }
     if (!Array.isArray(r.skills)) r.skills = [];
     if (!Array.isArray(r.references)) r.references = [];
+    if (!Array.isArray(r.achievements)) r.achievements = [];
 
     if (!r.template || !TEMPLATE_KEYS.includes(r.template)) {
         r.template = DEFAULT_TEMPLATE;
+    }
+
+    if (!r.layout || !LAYOUT_KEYS.includes(r.layout)) {
+        r.layout = DEFAULT_LAYOUT;
     }
 
     ['experience', 'projects'].forEach(tab => {

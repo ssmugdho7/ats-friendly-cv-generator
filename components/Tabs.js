@@ -17,6 +17,8 @@ import {
     FaFont,
     FaUsers,
     FaPalette,
+    FaLayout,
+    FaTrophy,
 } from 'react-icons/fa6';
 
 const TAB_ICONS = {
@@ -30,13 +32,15 @@ const TAB_ICONS = {
     certificates: FaCertificate,
     languages: FaLanguage,
     references: FaUsers,
+    achievements: FaTrophy,
     sections: FaStackExchange,
+    layout: FaLayout,
     template: FaPalette,
     font: FaFont,
 };
 
-const CONTENT_TABS = ['contact', 'tagline', 'summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references'];
-const SETTINGS_TABS = ['sections', 'template', 'font'];
+const CONTENT_TABS = ['contact', 'tagline', 'summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references', 'achievements'];
+const SETTINGS_TABS = ['sections', 'layout', 'template', 'font'];
 
 const TabButton = ({ tab, activeTab, small }) => {
     const Icon = TAB_ICONS[tab];

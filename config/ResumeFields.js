@@ -1,4 +1,4 @@
-export const DEFAULT_SECTION_ORDER = ['summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references'];
+export const DEFAULT_SECTION_ORDER = ['summary', 'education', 'experience', 'projects', 'skills', 'certificates', 'languages', 'references', 'achievements'];
 
 import { TEMPLATE_KEYS } from './templates';
 
@@ -195,9 +195,24 @@ export default {
         ],
     },
 
+    achievements: {
+        name: 'Achievements',
+        multiple: true,
+        fields: [
+            { name: 'label', label: 'Label (e.g. Years Experience)', placeholder: 'Years Experience' },
+            { name: 'value', label: 'Value (e.g. 8+)', placeholder: '8+' },
+        ],
+    },
+
     sections: {
         name: 'Sections',
         custom: 'SectionManager',
+        fields: [],
+    },
+
+    layout: {
+        name: 'Layout',
+        custom: 'LayoutSelector',
         fields: [],
     },
 

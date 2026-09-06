@@ -367,6 +367,16 @@ const buildSections = (data, contentWidth) => {
                     }
                 }
             });
+        } else if (key === 'achievements') {
+            if (!data.achievements?.length) continue;
+            out.push(heading('Achievements', font, tmpl));
+            const items = data.achievements.map(a => `${a.label}: ${a.value}`).join('   •   ');
+            out.push(
+                new Paragraph({
+                    spacing: { after: 40 },
+                    children: runs(items, { size: descSize, color: textColor, font: docxFont }),
+                }),
+            );
         }
     }
     return out;
