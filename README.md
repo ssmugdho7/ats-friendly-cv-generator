@@ -6,9 +6,7 @@
 <h3 align="center">An ATS-friendly resume maker</h3>
 
 <p align="center">
- <a href="https://resumave.vercel.app/">View Demo</a>
-    ·
-    <a href="https://github.com/ssmugdho7/ats-friendly-cv-generator/issues/new?assignees=&labels=bug&template=bug_report.md&title=">Report Bug</a>
+ <a href="https://resumave.vercel.app/](https://ats-friendly-cv-generator.vercel.app/">View Demo</a>
 </p>
 <br/>
 
