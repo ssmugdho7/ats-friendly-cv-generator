@@ -6,7 +6,7 @@
 <h3 align="center">An ATS-friendly resume maker</h3>
 
 <p align="center">
- <a href="https://resumave.vercel.app/](https://ats-friendly-cv-generator.vercel.app/">View Demo</a>
+ <a href="(https://ats-friendly-cv-generator.vercel.app)/">View Demo</a>
 </p>
 <br/>
 
